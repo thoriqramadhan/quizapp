@@ -19,3 +19,17 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+
+  .transition-300 {
+    @apply transition-all duration-300
+  }
+  /* typhography */
+  .text-title {
+    @apply text-2xl font-bold tracking-wider;
+  }
+  .text-description {
+    @apply text-sm font-light tracking-wider text-slate-700;
+  }
+}
