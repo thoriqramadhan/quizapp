@@ -21,9 +21,8 @@ body {
 }
 
 @layer components {
-
   .transition-300 {
-    @apply transition-all duration-300
+    @apply transition-all duration-300;
   }
   /* typhography */
   .text-title {
