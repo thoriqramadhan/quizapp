@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type InputLiteralTypeProps = 'password' | 'text' | 'email'
-interface InputLiteralProps {
+interface InputLiteralProps extends React.InputHTMLAttributes<HTMLInputElement> {
     className?: string
     name: string
     type: InputLiteralTypeProps
