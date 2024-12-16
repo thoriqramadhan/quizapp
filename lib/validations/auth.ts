@@ -5,7 +5,7 @@ export type validationError = {
 }
 export function validateName(name: string) {
     try {
-        return z.string().min(6).parse(name)
+        return z.string().min(3).parse(name)
     } catch (error) {
         if (error instanceof ZodError) {
             return {error: JSON.parse(error.message)}
