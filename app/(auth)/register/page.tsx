@@ -22,8 +22,8 @@ const Regsiter: FC<RegsiterProps> = ({ }) => {
     const isPasswordError = message?.errors?.password?.error?.[0]?.message || false
 
 
-    return <Container>
-        <CardLayout className='border-none shadow-none py-20 h-full'>
+    return <Container className='md:flex md:justify-center md:items-center'>
+        <CardLayout className='border-none shadow-none py-20 h-full md:w-[60%] lg:w-[50%]'>
             <h1 className='text-title'>Register</h1>
             <form action={registerAction} className='mt-5 space-y-5 h-full flex flex-col justify-between'>
                 <section className='space-y-5'>
@@ -34,7 +34,7 @@ const Regsiter: FC<RegsiterProps> = ({ }) => {
                         <Link href={'/login'} className='text-sm text-slate-700 hover:underline '>already have an account?</Link>
                     </span>
                 </section>
-                <Button className='w-full justify-center mt-auto'>{isPending ? <Loading /> : 'Register'}</Button>
+                <Button className='w-full justify-center mt-auto md:py-2'>{isPending ? <Loading /> : 'Register'}</Button>
             </form>
         </CardLayout>
     </Container>

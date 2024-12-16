@@ -3,13 +3,14 @@
 import { prisma } from "@/utils/db"
 import { validateEmail, validateName, validatePassword } from "../validations/auth"
 import { hash } from "@/utils/hashing"
+import { createSession } from "./jwt"
 
 
 export async function register(prevState: any , formData: HTMLFormElement) {
     try {
         const [name, email, password] = [formData.get('name'), formData.get('email'), formData.get('password')]
         const nameResponse = validateName(name)
-        const emailResponse = validateEmail(email)
+        const emailResponse = await validateEmail(email)
         // const emailDB = await prisma.user.findFirst({
         //     where: {
         //         emai
@@ -27,18 +28,30 @@ export async function register(prevState: any , formData: HTMLFormElement) {
                 password: hashedPassword
             }
         })
+        await createSession({name: name , email: email})
     } catch (error) {
         return {status: 400 , data : JSON.stringify(error)}
     }
 }
 export async function login(prevState: any, formData: HTMLFormElement) {
     try {
-        const test = new Promise((resolve) => {
-            setTimeout(() => {
-                resolve('done')
-            } , 4000)
+        const [password, email] = [formData.get('password'), formData.get('email')]
+        const dbEmail = await prisma.user.findFirst({
+            where: {
+                emai: email
+            }
         })
-        return {status:200}
+        if (!dbEmail) {
+            console.log('invalid payload email')
+            return{status: 400 , errors: {email: 'Invalid Payload!'} }
+        }
+        const emailResponse = await validateEmail(email)
+        const passwordResponse = await validatePassword(password, 'db', emailResponse as string)
+        console.log('checking ')
+        if (emailResponse!.error || passwordResponse.error) {
+
+            return {status: 400 , errors: {email: email.error , password: passwordResponse.error}}
+        }
     } catch (error) {
         return {status: 400}
     }

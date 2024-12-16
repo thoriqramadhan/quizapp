@@ -1,4 +1,6 @@
+import { prisma } from "@/utils/db";
 import { z, ZodError } from "zod";
+import bcrypt from 'bcrypt'
 
 export type validationError = {
     error: any
@@ -13,22 +15,41 @@ export function validateName(name: string) {
     }
 }
 
-export function validateEmail(email: string) {
+export async function validateEmail(email: string ,option?: 'db') {
     try {
-        return z.string().email().parse(email)
+        const zodResponse = z.string().email().parse(email)
+        if (option == 'db') {
+            const isEmailAvailable = await prisma.user.findFirst({ where: { emai: email } })
+            if (!isEmailAvailable) {
+                throw new Error('No email used!')
+            }
+        }
+        return zodResponse;
     } catch (error) {
         if (error instanceof ZodError) {
-            return {error: JSON.parse(error.message)}
+            return {error: JSON.parse(error.message)[0].message}
         }
+        return {error: 'Invalid payload!'}
     }
 }
-export function validatePassword(password: string) {
+export async function validatePassword(password: string , option? : 'db' , dbPassword?: string){
     try {
-        return z.string().min(6).parse(password)
+        const zodResponse = z.string().min(6).parse(password)
+        if (option == 'db') {
+            const isPasswordValid = await bcrypt.compare(password, dbPassword!)
+            if (isPasswordValid) {
+                
+                return isPasswordValid
+            }
+            return {error: 'Invalid Payload'}
+        }
+        return zodResponse
     } catch (error) {
         if (error instanceof ZodError) {
-            return {error: JSON.parse(error.message)}
+            console.log(JSON.parse(error.message))
+            return {error: JSON.parse(error.message)[0].message}
         }
+        return {error: 'Invalid Payload!'}
     }
 }
     
