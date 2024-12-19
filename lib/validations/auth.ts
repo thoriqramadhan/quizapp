@@ -37,8 +37,8 @@ export async function validatePassword(password: string , option? : 'db' , dbPas
         const zodResponse = z.string().min(6).parse(password)
         if (option == 'db') {
             const isPasswordValid = await bcrypt.compare(password, dbPassword!)
+            console.log(password , dbPassword , isPasswordValid)
             if (isPasswordValid) {
-                
                 return isPasswordValid
             }
             return {error: 'Invalid Payload'}

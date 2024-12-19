@@ -27,7 +27,7 @@ export async function register(prevState: any , formData: HTMLFormElement) {
         await prisma.user.create({
             data: {
                 name: nameResponse as string,
-                emai: emailResponse as string,
+                email: emailResponse as string,
                 password: hashedPassword
             }
         })
@@ -41,22 +41,19 @@ export async function register(prevState: any , formData: HTMLFormElement) {
 export async function login(prevState: any, formData: HTMLFormElement) {
     try {
         const [password, email] = [formData.get('password'), formData.get('email')]
-        const dbEmail = await prisma.user.findFirst({
-            where: {
-                emai: email
-            }
-        })
+        const emailResponse = await validateEmail(email)
+        const dbEmail = await getEmail(email)
         if (!dbEmail) {
             console.log('invalid payload email')
             return{status: 400 , errors: {email: 'Invalid Payload!'} }
         }
-        const emailResponse = await validateEmail(email)
-        const passwordResponse = await validatePassword(password, 'db', emailResponse as string)
+        const passwordResponse = await validatePassword(password, 'db', dbEmail.password)
         console.log('checking ')
         if (emailResponse!.error || passwordResponse.error) {
-
             return {status: 400 , errors: {email: email.error , password: passwordResponse.error}}
         }
+        await createSession({ name: dbEmail.name, email: dbEmail.emai })
+        return {status: 200 , message: 'Success login'}
     } catch (error) {
         return {status: 400}
     }

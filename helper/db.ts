@@ -4,7 +4,7 @@ export async function getEmail(email: string) {
     try {
         const emailDB = await prisma.user.findFirst(({
             where: {
-                emai: email
+                email: email
             }
         }))
         console.log(emailDB)
