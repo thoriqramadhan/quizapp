@@ -17,6 +17,8 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({ }) => {
     const [message, loginAction, isPending] = useActionState(login, null)
+    console.log(message);
+
     const isEmailInvalid = message?.errors?.email;
     const isPasswordInvalid = message?.errors?.password
     return <Container className='md:flex md:justify-center md:items-center'>

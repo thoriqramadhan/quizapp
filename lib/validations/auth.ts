@@ -10,7 +10,7 @@ export function validateName(name: string) {
         return z.string().min(3).parse(name)
     } catch (error) {
         if (error instanceof ZodError) {
-            return {error: JSON.parse(error.message)}
+            return {error: JSON.parse(error.message)[0].message}
         }
     }
 }

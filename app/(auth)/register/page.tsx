@@ -9,6 +9,7 @@ import { InputBoolean } from '@/components/server/ui/Input';
 import Label from '@/components/server/ui/Label';
 import { register } from '@/lib/action/auth';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FC, useActionState, useEffect } from 'react';
 
 interface RegsiterProps {
@@ -17,9 +18,16 @@ interface RegsiterProps {
 
 const Regsiter: FC<RegsiterProps> = ({ }) => {
     const [message, registerAction, isPending] = useActionState(register, null)
-    const isEmailError = message?.errors?.email?.error?.[0]?.message || false
-    const isNameError = message?.errors?.name?.error?.[0]?.message || false
-    const isPasswordError = message?.errors?.password?.error?.[0]?.message || false
+    const router = useRouter()
+    const isEmailError = message?.errors?.email || false
+    const isNameError = message?.errors?.name || false
+    const isPasswordError = message?.errors?.password || false
+    if (message?.status == 200) {
+        router.push('/home')
+    }
+
+    console.log(isEmailError, isNameError, isPasswordError);
+
 
 
     return <Container className='md:flex md:justify-center md:items-center'>

@@ -28,9 +28,12 @@ export async function decrypt(jwtSignature: string) {
 }
 
 export async function createSession(user: User) {
-    const expiredAt = new Date(Date.now() + 2 * 24 + 60 + 60 + 1000)
-    const jwtSignature = await signJWT({user , expiredAt})
-    const cookiesStore = await cookies()
+    try {
+        const expiredAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+        console.log('creating jwt sign')
+        const jwtSignature = await signJWT({ user, expiredAt })
+        const cookiesStore = await cookies()
+        console.log('creating cookies')
     cookiesStore.set('session', jwtSignature, {
         httpOnly: true,
         secure: true,
@@ -38,4 +41,7 @@ export async function createSession(user: User) {
         sameSite: 'lax',
         path:'/'
     })
+    } catch (error) {
+        console.log(error)
+    }
 }
