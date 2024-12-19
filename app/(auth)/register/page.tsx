@@ -22,9 +22,11 @@ const Regsiter: FC<RegsiterProps> = ({ }) => {
     const isEmailError = message?.errors?.email || false
     const isNameError = message?.errors?.name || false
     const isPasswordError = message?.errors?.password || false
-    if (message?.status == 200) {
-        router.push('/home')
-    }
+    useEffect(() => {
+        if (message?.status == 200) {
+            router.push('/home')
+        }
+    }, [message])
 
     console.log(isEmailError, isNameError, isPasswordError);
 

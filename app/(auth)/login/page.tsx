@@ -9,7 +9,8 @@ import { InputBoolean } from '@/components/server/ui/Input';
 import Label from '@/components/server/ui/Label';
 import { login } from '@/lib/action/auth';
 import Link from 'next/link';
-import { FC, useActionState } from 'react';
+import { useRouter } from 'next/navigation';
+import { FC, useActionState, useEffect } from 'react';
 
 interface PageProps {
 
@@ -17,7 +18,12 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({ }) => {
     const [message, loginAction, isPending] = useActionState(login, null)
-    console.log(message);
+    const router = useRouter()
+    useEffect(() => {
+        if (message?.status == 200) {
+            router.push('/home')
+        }
+    }, [message])
 
     const isEmailInvalid = message?.errors?.email;
     const isPasswordInvalid = message?.errors?.password
