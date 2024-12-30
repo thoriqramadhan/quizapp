@@ -6,12 +6,12 @@ import React, { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 
-const buttonVariant = cva('px-3 py-1 rounded-md flex gap-x-2 items-center text-white font-semibold transition-300 hover:scale-105 focus:outline-[#5E40D2]', {
+const buttonVariant = cva('px-3 py-1 rounded-md flex gap-x-2 items-center justify-center text-white font-semibold transition-300 hover:scale-105 focus:outline-[#5E40D2]', {
     variants: {
         variant: {
             default: 'bg-[#715BC7] shadow-md',
             outline: 'border-[2px] border-[#715BC7] text-black'
-        }
+        },
     },
     defaultVariants: {
         variant: 'default'

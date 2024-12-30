@@ -30,7 +30,7 @@ const Appbar: FC<AppbarProps> = ({ }) => {
         }
     ] as appBarItemType[]
     return <>
-        <nav className='hidden md:flex w-[170px] h-full flex-col bg-[#5E40D2] text-white py-5'>
+        <nav className='hidden md:flex md:fixed  w-[170px] h-full flex-col bg-[#5E40D2] text-white py-5'>
             <h1 className='font-bold text-xl mx-5'>Quizapp</h1>
             <div className="mt-10">
                 <section className="w-full flex flex-col gap-y-3">

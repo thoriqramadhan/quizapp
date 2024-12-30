@@ -9,7 +9,7 @@ interface LabelProps {
 }
 
 const Label: FC<LabelProps> = ({ htmlFor, className, isRequired = false }) => {
-    return <label htmlFor={htmlFor} className={twMerge('font-semibold text-slate-500', className)}>{capitalizeFirstLetter(htmlFor)} {isRequired ?? <span className='text-red-400'>*</span>}</label>
+    return <label htmlFor={htmlFor} className={twMerge('font-semibold text-slate-500 capitalize', className)}>{capitalizeFirstLetter(htmlFor)} {isRequired ?? <span className='text-red-400'>*</span>}</label>
 }
 
 export default Label;
