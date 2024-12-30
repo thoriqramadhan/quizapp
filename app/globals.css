@@ -28,6 +28,9 @@ body {
   .text-title {
     @apply text-2xl font-bold tracking-wider;
   }
+  .text-medium {
+    @apply text-lg font-semibold tracking-wide;
+  }
   .text-description {
     @apply text-sm font-light tracking-wider text-slate-700;
   }

@@ -19,13 +19,13 @@ const Appbar: FC<AppbarProps> = ({ }) => {
             icon: <Pencil size={iconSize} />
         },
         {
-            title: 'Owned',
-            href: '/home/owned',
+            title: 'Library',
+            href: '/home/library',
             icon: <Backpack size={iconSize} />
         },
         {
-            title: 'Explore',
-            href: '/home/explore',
+            title: 'Discover',
+            href: '/home/discover',
             icon: <Telescope size={iconSize} />
         }
     ] as appBarItemType[]

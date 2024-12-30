@@ -8,7 +8,9 @@ interface LayoutProps {
 const Layout: FC<LayoutProps> = ({ children }) => {
     return <main className='w-full h-screen flex'>
         <Appbar />
-        {children}
+        <section className='px-5 py-5 flex-1'>
+            {children}
+        </section>
     </main>
 }
 
