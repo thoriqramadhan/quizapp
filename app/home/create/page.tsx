@@ -3,7 +3,7 @@ import { Button } from '@/components/client/Button';
 import { CardAnswer } from '@/components/client/Card';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral } from '@/components/server/ui/Input';
-import { ArrowLeft, ChevronDown, CircleEllipsis, Image } from 'lucide-react';
+import { ArrowLeft, ChevronDown, CircleEllipsis, Image, Plus } from 'lucide-react';
 import React, { FC, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
 
@@ -30,7 +30,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
         inputQuestion?.focus()
     }, [isType])
     return <>
-        <span className="space-y-5 overflow-hidden">
+        <article className="space-y-5 overflow-hidden max-w-[calc(100%-180px)]">
             {/* V Options */}
             <div className='flex justify-between items-center w-full'>
                 <span className='flex items-center gap-x-5'>
@@ -80,7 +80,17 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     Add Answer
                 </CardAnswer>
             </section>
-        </span>
+            <section className='w-full py-5 border-y-[3px] flex-y-center gap-x-10 justify-between'>
+                <section className='border max-w-[calc(100%-40px)] flex space-x-5 overflow-hidden'>
+                    {Array.from({ length: 10 }).map((item, index) => (
+                        <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] rounded-2xl">
+                            <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>1</span>
+                        </div>
+                    ))}
+                </section>
+                <Button className='p-5 h-fit rounded-xl'><Plus /></Button>
+            </section>
+        </article>
     </>;
 }
 

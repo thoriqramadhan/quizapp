@@ -21,8 +21,14 @@ body {
 }
 
 @layer components {
-  .flex-center{
+  .flex-all-center{
     @apply flex justify-center items-center
+  }
+  .flex-y-center{
+    @apply flex items-center
+  }
+  .flex-h-center{
+    @apply flex justify-center
   }
   .transition-300 {
     @apply transition-all duration-300;
