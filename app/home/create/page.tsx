@@ -1,8 +1,11 @@
 'use client'
 import { Button } from '@/components/client/Button';
 import { CardAnswer } from '@/components/client/Card';
+import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
-import { InputLiteral } from '@/components/server/ui/Input';
+import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
+import { QuizProvider, useQuiz } from '@/lib/context/createQuiz';
+import { validateString } from '@/lib/validations/global';
 import { ArrowLeft, ChevronDown, CircleEllipsis, Image, Plus } from 'lucide-react';
 import React, { FC, MouseEventHandler, useEffect, useRef, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
@@ -11,26 +14,38 @@ interface PageProps {
 
 }
 
+// Parent Components
+// Parent Only for controlling page switch & save question to localeStorage
 const CreateQuiz: FC<PageProps> = ({ }) => {
-    const [isType, setIsType] = useState(false)
-    const [question, setQuestion] = useState<string>('')
-    const inputParent = useRef<HTMLLabelElement>(null)
-    function handleOpenType(event: React.MouseEvent) {
-        event.preventDefault()
-        setIsType(prev => !prev)
-    }
-    function handleInputQuestion(event: React.ChangeEvent<HTMLTextAreaElement>) {
-        const inputElement = event.currentTarget
-        // inputElement.style.width = `${event.target.value.length + 1}ch`
-        setQuestion(event.target.value)
-    }
+    const { question, handleChangeQuestion } = useQuiz()
     useEffect(() => {
-        const inputQuestionParent = inputParent!.current
-        const inputQuestion = inputQuestionParent?.getElementsByTagName('textarea')[0]
-        inputQuestion?.focus()
-    }, [isType])
+        {
+            /*
+            {
+                quizName: string,
+                coverImg: string,
+                tags: string,
+                quiz: 
+                        [
+                            {
+                                question: string,
+                                type: string,
+                                time: string,
+                                choice: [
+                                            a.,
+                                            b.questionss....,
+                                            c.,
+                                            d.
+                                        ]
+                                correctChoice: string
+                            }
+                        ]
+            }
+            */
+        }
+    }, [])
     return <>
-        <article className="space-y-5 overflow-hidden max-w-[calc(100%-180px)]">
+        <article className="space-y-5 overflow-hidden w-full">
             {/* V Options */}
             <div className='flex justify-between items-center w-full'>
                 <span className='flex items-center gap-x-5'>
@@ -39,20 +54,84 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                 </span>
                 <CircleEllipsis className='cursor-pointer' />
             </div>
-
-            {/* inputs */}
-            <label htmlFor="quiz_img" className='w-full border-[3px] h-[240px] flex flex-col items-center justify-center cursor-pointer rounded-3xl bg-zinc-50 border-[#9984EA] gap-y-3'>
-                <IoMdImage color='#9984EA' size={50} />
-                <p className='text-medium text-[#5E40D2]'>Add Cover Image</p>
-                <input type="file" name="quiz_img" id="quiz_img" hidden accept='.jpg | .png' />
-            </label>
-            <section className='grid grid-cols-1 space-y-5 md:space-y-0 md:grid-cols-2 md:gap-x-5'>
-                <InputSection type='literal' isRequired={true} name='project_name' />
-                <InputSection type='select' isRequired={true} name='tags' selectOption={[{ value: 'test' }]} />
-            </section>
-            <Button className='w-full'>Next</Button>
-
             {/* question */}
+            <QuizProvider>
+                <InitialQuestion />
+                {
+                    question.quiz.length > 0 && (
+                        <>
+                            <AnswerContainer />
+                            <QuestionView />
+                        </>
+                    )
+                }
+            </QuizProvider>
+        </article>
+    </>;
+}
+
+// Other Componentes 
+interface InitialQuestionProps { }
+
+const InitialQuestion: FC<InitialQuestionProps> = () => {
+    const { question, handleChangeQuestion } = useQuiz()
+    const [questionData, setQuestionData] = useState({
+        projectName: '',
+        coverImg: '',
+        tags: '',
+    })
+    const [errors, setErrors] = useState({ project_name: undefined, tags: undefined })
+    function handleFormAction(formData: FormData) {
+        const validateProjectName = validateString(5, 10, formData.get('project_name')!.toString())
+        const validateTags = validateString(3, 10, formData.get('tags')!.toString())
+        if (validateProjectName?.error) {
+            setErrors(prev => {
+                return { ...prev, project_name: validateProjectName!.error }
+            })
+        }
+        if (validateTags?.error) {
+            setErrors(prev => {
+                return { ...prev, tags: validateProjectName!.error }
+            })
+        }
+    }
+    return (
+        <>
+            <form action={handleFormAction} className='space-y-5'>
+                <label htmlFor="quiz_img" className='w-full border-[3px] h-[240px] flex flex-col items-center justify-center cursor-pointer rounded-3xl bg-zinc-50 border-[#9984EA] gap-y-3'>
+                    <IoMdImage color='#9984EA' size={50} />
+                    <p className='text-medium text-[#5E40D2]'>Add Cover Image</p>
+                    <input type="file" name="quiz_img" id="quiz_img" hidden accept='.jpg | .png' />
+                </label>
+                <section className='grid grid-cols-1 space-y-5 md:space-y-0 md:grid-cols-2 md:gap-x-5'>
+                    <InputSection isRequired={true} name='project_name' error={errors.project_name && <ErrorMessage text={errors.project_name} />}>
+                        <InputLiteral name='project_name' type='text' />
+                    </InputSection>
+                    <InputSection isRequired={true} name='tags' error={errors.tags && <ErrorMessage text={errors.tags} />}>
+                        <InputSelect name='tags' option={[{ value: 'test' }, { value: 'test2' }]} value={'test2'} />
+                    </InputSection>
+                </section>
+                <Button className='w-full' type='submit'>Next</Button>
+            </form>
+        </>
+    )
+}
+interface AnswerContainerProps { }
+
+const AnswerContainer: FC<AnswerContainerProps> = () => {
+    const [isType, setIsType] = useState(false)
+    const inputParent = useRef<HTMLLabelElement>(null)
+    function handleOpenType(event: React.MouseEvent) {
+        event.preventDefault()
+        setIsType(prev => !prev)
+    }
+    useEffect(() => {
+        const inputQuestionParent = inputParent!.current
+        const inputQuestion = inputQuestionParent?.getElementsByTagName('textarea')[0]
+        inputQuestion?.focus()
+    }, [isType])
+    return (
+        <>
             <div className="w-full flex gap-x-3">
                 <Button className='rounded-2xl font-normal text-sm py-2'>
                     10 Sec
@@ -66,7 +145,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     isType ? <textarea name="quiz_question" id="quiz_question" onChange={handleInputQuestion} value={question} className='outline-0 bg-transparent text-medium truncate font-medium text-zinc-600 w-[500px] resize-none'></textarea> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
-            <section className='w-full h-[800px] grid md:h-[500px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
+            <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
                 <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208'>
                     Add Answer
                 </CardAnswer>
@@ -80,18 +159,25 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     Add Answer
                 </CardAnswer>
             </section>
-            <section className='w-full py-5 border-y-[3px] flex-y-center gap-x-10 justify-between'>
-                <section className='border max-w-[calc(100%-40px)] flex space-x-5 overflow-hidden'>
-                    {Array.from({ length: 10 }).map((item, index) => (
-                        <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] rounded-2xl">
-                            <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>1</span>
-                        </div>
-                    ))}
-                </section>
-                <Button className='p-5 h-fit rounded-xl'><Plus /></Button>
-            </section>
-        </article>
-    </>;
+        </>
+    )
 }
+interface QuestionViewProps { }
+
+const QuestionView: FC<QuestionViewProps> = () => {
+    return (
+        <section className='w-full py-5 border-y-[3px] flex-y-center gap-x-10 justify-between'>
+            <section className='border max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
+                {Array.from({ length: 10 }).map((item, index) => (
+                    <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
+                        <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
+                    </div>
+                ))}
+            </section>
+            <Button className='p-5 h-fit rounded-xl'><Plus /></Button>
+        </section>
+    )
+}
+
 
 export default CreateQuiz;
