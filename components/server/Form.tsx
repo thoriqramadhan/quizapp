@@ -1,35 +1,42 @@
-import React, { FC } from 'react';
+import React, { FC, isValidElement, ReactElement } from 'react';
 import Label from './ui/Label';
 import { InputBoolean, InputLiteral, InputLiteralTypeProps, InputOption, InputSelect } from './ui/Input';
 
+type AllowedChildren = ReactElement
 interface InputSectionProps {
     name: string,
-    type: 'literal' | 'checkbox' | 'select',
-    isRequired?: boolean,
     error?: React.ReactNode,
-    inputLiteralType?: InputLiteralTypeProps,
-    selectOption?: InputOption[]
+    isRequired: boolean,
+    children: AllowedChildren
 }
 
 <section className='flex flex-col space-y-2'>
 </section>
-export const InputSection: FC<InputSectionProps> = ({ name, type, isRequired, error, inputLiteralType, selectOption }) => {
-    function checkInputTypes() {
-        const inputProps = { name, required: isRequired }
-        if (type == 'literal') {
-            return <InputLiteral {...inputProps} type={inputLiteralType} />
-        } else if (type == 'checkbox') {
-            return <InputBoolean {...inputProps} type='checkbox' />
-        } else if (type == 'select') {
-            return <InputSelect name={name} option={selectOption! || []} />
-        }
-    }
+export const InputSection: FC<InputSectionProps> = ({ name, error, isRequired, children }) => {
+    validateChildren(children)
     return (
         <section className='flex flex-col space-y-2'>
             <Label htmlFor={name} isRequired={isRequired} />
-            {checkInputTypes()}
+            {children}
             {error}
         </section>
     )
 
+}
+
+function validateChildren(children: AllowedChildren) {
+    let maxFailed = 3;
+    let failedCount = 0;
+    if (children.type !== InputLiteral) {
+        failedCount += 1;
+    }
+    if (children.type !== InputBoolean) {
+        failedCount += 1;
+    }
+    if (children.type !== InputSelect) {
+        failedCount += 1;
+    }
+    if (maxFailed == failedCount) {
+        throw new Error("Only Accept InputLiter / InputSelect / InputBoolean components");
+    }
 }
