@@ -80,20 +80,33 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
         coverImg: '',
         tags: '',
     })
+    console.log(question);
+
     const [errors, setErrors] = useState({ project_name: undefined, tags: undefined })
     function handleFormAction(formData: FormData) {
         const validateProjectName = validateString(5, 10, formData.get('project_name')!.toString())
         const validateTags = validateString(3, 10, formData.get('tags')!.toString())
+        let isError = false;
         if (validateProjectName?.error) {
             setErrors(prev => {
                 return { ...prev, project_name: validateProjectName!.error }
             })
+            isError = true
         }
         if (validateTags?.error) {
             setErrors(prev => {
                 return { ...prev, tags: validateProjectName!.error }
             })
+            isError = true
         }
+        handleChangeQuestion({
+            isInitial: false,
+            projectName: isError ? '' : validateProjectName as string,
+            coverImg: '',
+            tags: isError ? '' : validateTags as string,
+        })
+        console.log(isError);
+
     }
     return (
         <>
@@ -105,10 +118,10 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
                 </label>
                 <section className='grid grid-cols-1 space-y-5 md:space-y-0 md:grid-cols-2 md:gap-x-5'>
                     <InputSection isRequired={true} name='project_name' error={errors.project_name && <ErrorMessage text={errors.project_name} />}>
-                        <InputLiteral name='project_name' type='text' />
+                        <InputLiteral name='project_name' type='text' defaultValue={question.projectName} />
                     </InputSection>
                     <InputSection isRequired={true} name='tags' error={errors.tags && <ErrorMessage text={errors.tags} />}>
-                        <InputSelect name='tags' option={[{ value: 'test' }, { value: 'test2' }]} value={'test2'} />
+                        <InputSelect name='tags' option={[{ value: 'test' }, { value: 'test2' }]} defaultValue={question.tags} />
                     </InputSection>
                 </section>
                 <Button className='w-full' type='submit'>Next</Button>
