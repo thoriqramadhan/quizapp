@@ -105,6 +105,7 @@ interface AnswerContainerProps { }
 export type optionProps = {
     isQuestion?: boolean,
     isAnswer?: boolean,
+    isSetCorrectChoice?: boolean,
     answerIndex?: 0 | 1 | 2 | 3
 }
 type QuestionObject = {
@@ -118,7 +119,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     const { question, handleChangeQuestion } = useQuiz()
     const questionObjectInit = {
         question: '',
-        type: '',
+        type: 'quiz',
         time: '',
         choice: [],
         correctChoice: ''
@@ -127,7 +128,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
     const inputParent = useRef<HTMLLabelElement>(null)
 
-    function handleChange(option: optionProps, value: string) {
+    function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
             setQuestionObject(prev => {
                 return {
@@ -147,6 +148,14 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                 return {
                     ...prev,
                     choice: choiceReference
+                }
+            })
+        }
+        if (option.isSetCorrectChoice) {
+            setQuestionObject(prev => {
+                return {
+                    ...prev,
+                    correctChoice: getChoiceAplhabet(option!.answerIndex!)
                 }
             })
         }
@@ -183,6 +192,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                 }
             </label>
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
+                <input type="radio" name='correctChoice' hidden onChange={(e) => console.log(e.target.value)} />
                 <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} />
 
                 <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} />
