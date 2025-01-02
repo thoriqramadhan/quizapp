@@ -5,7 +5,7 @@ import { Container } from '@/components/server/Container';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import Loading from '@/components/server/Loading';
-import { InputBoolean } from '@/components/server/ui/Input';
+import { InputBoolean, InputLiteral } from '@/components/server/ui/Input';
 import Label from '@/components/server/ui/Label';
 import { register } from '@/lib/action/auth';
 import Link from 'next/link';
@@ -37,6 +37,7 @@ const Regsiter: FC<RegsiterProps> = ({ }) => {
             <h1 className='text-title'>Register</h1>
             <form action={registerAction} className='mt-5 space-y-5 h-full flex flex-col justify-between'>
                 <section className='space-y-5'>
+
                     <InputSection name='name' type={'text'} isRequired={true} error={isNameError && <ErrorMessage text={isNameError} />} />
                     <InputSection name='email' type='email' isRequired={true} error={isEmailError && <ErrorMessage text={isEmailError} />} />
                     <InputSection name='password' type='password' isRequired={true} error={isPasswordError && <ErrorMessage text={isPasswordError} />} />

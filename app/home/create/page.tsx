@@ -4,11 +4,12 @@ import { CardAnswer } from '@/components/client/Card';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
-import { QuizProvider, useQuiz } from '@/lib/context/createQuiz';
+import { useQuiz } from '@/lib/context/createQuiz';
 import { validateString } from '@/lib/validations/global';
-import { ArrowLeft, ChevronDown, CircleEllipsis, Image, Plus } from 'lucide-react';
-import React, { FC, MouseEventHandler, useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ChevronDown, CircleEllipsis, Plus } from 'lucide-react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface PageProps {
 
@@ -18,32 +19,6 @@ interface PageProps {
 // Parent Only for controlling page switch & save question to localeStorage
 const CreateQuiz: FC<PageProps> = ({ }) => {
     const { question, handleChangeQuestion } = useQuiz()
-    useEffect(() => {
-        {
-            /*
-            {
-                quizName: string,
-                coverImg: string,
-                tags: string,
-                quiz: 
-                        [
-                            {
-                                question: string,
-                                type: string,
-                                time: string,
-                                choice: [
-                                            a.,
-                                            b.questionss....,
-                                            c.,
-                                            d.
-                                        ]
-                                correctChoice: string
-                            }
-                        ]
-            }
-            */
-        }
-    }, [])
     return <>
         <article className="space-y-5 overflow-hidden w-full">
             {/* V Options */}
@@ -55,17 +30,16 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                 <CircleEllipsis className='cursor-pointer' />
             </div>
             {/* question */}
-            <QuizProvider>
-                <InitialQuestion />
-                {
-                    question.quiz.length > 0 && (
-                        <>
-                            <AnswerContainer />
-                            <QuestionView />
-                        </>
+            {
+                !question.isInitial ? (
+                    <>
+                        <AnswerContainer />
+                    </>
+                ) :
+                    (
+                        <InitialQuestion />
                     )
-                }
-            </QuizProvider>
+            }
         </article>
     </>;
 }
@@ -80,7 +54,6 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
         coverImg: '',
         tags: '',
     })
-    console.log(question);
 
     const [errors, setErrors] = useState({ project_name: undefined, tags: undefined })
     function handleFormAction(formData: FormData) {
@@ -105,8 +78,6 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
             coverImg: '',
             tags: isError ? '' : validateTags as string,
         })
-        console.log(isError);
-
     }
     return (
         <>
@@ -132,17 +103,13 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
 interface AnswerContainerProps { }
 
 const AnswerContainer: FC<AnswerContainerProps> = () => {
-    const [isType, setIsType] = useState(false)
+    const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
     const inputParent = useRef<HTMLLabelElement>(null)
-    function handleOpenType(event: React.MouseEvent) {
-        event.preventDefault()
-        setIsType(prev => !prev)
-    }
     useEffect(() => {
         const inputQuestionParent = inputParent!.current
         const inputQuestion = inputQuestionParent?.getElementsByTagName('textarea')[0]
         inputQuestion?.focus()
-    }, [isType])
+    }, [IsOpenQuestion])
     return (
         <>
             <div className="w-full flex gap-x-3">
@@ -153,39 +120,49 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                     Quiz <ChevronDown size={15} />
                 </Button>
             </div>
-            <label htmlFor="quiz_question" ref={inputParent} onClick={handleOpenType} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-[200px] flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer'>
+            <label htmlFor="quiz_question" ref={inputParent} onClick={() => setIsOpenQuestion(prev => true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
-                    isType ? <textarea name="quiz_question" id="quiz_question" onChange={handleInputQuestion} value={question} className='outline-0 bg-transparent text-medium truncate font-medium text-zinc-600 w-[500px] resize-none'></textarea> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
+                    IsOpenQuestion ? <TextareaAutosize name='quiz_question' className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208'>
-                    Add Answer
-                </CardAnswer>
-                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47'>
-                    Add Answer
-                </CardAnswer>
-                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0'>
-                    Add Answer
-                </CardAnswer>
-                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122'>
-                    Add Answer
-                </CardAnswer>
+                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' />
+
+                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' />
+
+                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' />
+
+                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' />
+
             </section>
+            <QuestionView />
         </>
     )
 }
 interface QuestionViewProps { }
 
 const QuestionView: FC<QuestionViewProps> = () => {
+    const { question, handleChangeQuestion } = useQuiz()
+    function handleMainCard() {
+        console.log('clicked main');
+
+        handleChangeQuestion({ ...question, isInitial: !question.isInitial })
+
+    }
     return (
         <section className='w-full py-5 border-y-[3px] flex-y-center gap-x-10 justify-between'>
-            <section className='border max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
-                {Array.from({ length: 10 }).map((item, index) => (
-                    <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
-                        <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
-                    </div>
-                ))}
+            <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
+                {/* main card V*/}
+                <div className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl" onClick={handleMainCard}>
+                    <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>Main</span>
+                </div>
+                {
+                    question.quiz!.map((item, index) => (
+                        <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
+                            <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
+                        </div>
+                    ))
+                }
             </section>
             <Button className='p-5 h-fit rounded-xl'><Plus /></Button>
         </section>

@@ -1,19 +1,19 @@
 'use client'
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type changeQuestionOptionProps = {
     isInitial: boolean,
-    value: any
 }
-type QuestionObject = {
-    projectName: string,
-    coverImg: string,
-    tags: string,
-    quiz: any[]
+export type QuestionObject = {
+    isInitial: boolean,
+    projectName?: string,
+    coverImg?: string,
+    tags?: string,
+    quiz?: any[]
 }
 type QuizContextType = {
     question: QuestionObject,
-    handleChangeQuestion: (option: changeQuestionOptionProps) => void
+    handleChangeQuestion: (value: QuestionObject) => void
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined)
@@ -27,15 +27,26 @@ export function useQuiz() {
 
 export function QuizProvider({ children }) {
     const initialQuestionObject = {
+        isInitial: true,
         projectName: '',
         coverImg: '',
         tags: '',
         quiz: []
     }
-    const [question, setQuestion] = useState<QuestionObject>(initialQuestionObject)
-    function handleChangeQuestion(option: changeQuestionOptionProps) {
-        console.log('you using the context!', option);
+    const [question, setQuestion] = useState<QuestionObject>(JSON.parse(localStorage.getItem('createQuestion')) || initialQuestionObject)
+    function handleChangeQuestion(value: QuestionObject) {
+        setQuestion(prev => {
+            return {
+                ...prev,
+                ...value
+            }
+        })
     }
+
+    useEffect(() => {
+        localStorage.setItem('createQuestion', JSON.stringify(question))
+    }, [question])
+
     return <QuizContext.Provider value={{ question, handleChangeQuestion }}>
         {children}
     </QuizContext.Provider>
