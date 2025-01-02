@@ -102,14 +102,71 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
 }
 interface AnswerContainerProps { }
 
+export type optionProps = {
+    isQuestion?: boolean,
+    isAnswer?: boolean,
+    answerIndex?: 0 | 1 | 2 | 3
+}
+type QuestionObject = {
+    question: string,
+    type: string,
+    time: string,
+    choice: string[],
+    correctChoice: string
+}
 const AnswerContainer: FC<AnswerContainerProps> = () => {
+    const { question, handleChangeQuestion } = useQuiz()
+    const questionObjectInit = {
+        question: '',
+        type: '',
+        time: '',
+        choice: [],
+        correctChoice: ''
+    }
+    const [questionObject, setQuestionObject] = useState<QuestionObject>(questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
     const inputParent = useRef<HTMLLabelElement>(null)
+
+    function handleChange(option: optionProps, value: string) {
+        if (option.isQuestion) {
+            setQuestionObject(prev => {
+                return {
+                    ...prev,
+                    question: value
+                }
+            })
+        }
+
+        if (option.isAnswer) {
+            if (typeof option.answerIndex !== 'number') {
+                throw new Error('answer index needed.')
+            }
+            const choiceReference = questionObject.choice
+            choiceReference[option!.answerIndex!] = `${getChoiceAplhabet(option!.answerIndex!)}${value}`
+            setQuestionObject(prev => {
+                return {
+                    ...prev,
+                    choice: choiceReference
+                }
+            })
+        }
+    }
+    function getChoiceAplhabet(index: 0 | 1 | 2 | 3) {
+        if (index == 0) {
+            return 'a.'
+        } else if (index == 1) {
+            return 'b.'
+        } else if (index == 2) {
+            return 'c.'
+        } else {
+            return 'd.'
+        }
+    }
+
     useEffect(() => {
-        const inputQuestionParent = inputParent!.current
-        const inputQuestion = inputQuestionParent?.getElementsByTagName('textarea')[0]
-        inputQuestion?.focus()
-    }, [IsOpenQuestion])
+        console.log(questionObject);
+
+    }, [questionObject])
     return (
         <>
             <div className="w-full flex gap-x-3">
@@ -120,19 +177,19 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                     Quiz <ChevronDown size={15} />
                 </Button>
             </div>
-            <label htmlFor="quiz_question" ref={inputParent} onClick={() => setIsOpenQuestion(prev => true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
+            <label htmlFor="quiz_question" ref={inputParent} onClick={() => setIsOpenQuestion(true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
-                    IsOpenQuestion ? <TextareaAutosize name='quiz_question' className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
+                    IsOpenQuestion ? <TextareaAutosize name='quiz_question' onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' />
+                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} />
 
-                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' />
+                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} />
 
-                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' />
+                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} />
 
-                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' />
+                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} />
 
             </section>
             <QuestionView />
