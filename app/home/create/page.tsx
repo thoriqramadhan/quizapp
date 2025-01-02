@@ -49,11 +49,6 @@ interface InitialQuestionProps { }
 
 const InitialQuestion: FC<InitialQuestionProps> = () => {
     const { question, handleChangeQuestion } = useQuiz()
-    const [questionData, setQuestionData] = useState({
-        projectName: '',
-        coverImg: '',
-        tags: '',
-    })
 
     const [errors, setErrors] = useState({ project_name: undefined, tags: undefined })
     function handleFormAction(formData: FormData) {
@@ -212,7 +207,6 @@ const QuestionView: FC<QuestionViewProps> = () => {
     const { question, handleChangeQuestion } = useQuiz()
     function handleMainCard() {
         console.log('clicked main');
-
         handleChangeQuestion({ ...question, isInitial: !question.isInitial })
 
     }

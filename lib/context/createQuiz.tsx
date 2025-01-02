@@ -45,6 +45,7 @@ export function QuizProvider({ children }) {
 
     useEffect(() => {
         localStorage.setItem('createQuestion', JSON.stringify(question))
+
     }, [question])
 
     return <QuizContext.Provider value={{ question, handleChangeQuestion }}>
