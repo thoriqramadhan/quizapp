@@ -1,6 +1,7 @@
 'use client'
 import { Button } from '@/components/client/Button';
 import { CardAnswer } from '@/components/client/Card';
+import Dropdown from '@/components/client/Dropdown';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
@@ -121,7 +122,8 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     }
     const [questionObject, setQuestionObject] = useState<QuestionObject>(questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
-    const inputParent = useRef<HTMLLabelElement>(null)
+
+    const timeOptions = [5, 10, 15, 20]
 
     function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
@@ -155,6 +157,22 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             })
         }
     }
+    function handleTimeChange(value: string | number) {
+        setQuestionObject(prev => {
+            return {
+                ...prev,
+                time: value.toString()
+            }
+        })
+    }
+    function handleTypeChange(value: string | number) {
+        setQuestionObject(prev => {
+            return {
+                ...prev,
+                type: value.toString()
+            }
+        })
+    }
     function getChoiceAplhabet(index: 0 | 1 | 2 | 3) {
         if (index == 0) {
             return 'a.'
@@ -174,14 +192,10 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     return (
         <>
             <div className="w-full flex gap-x-3">
-                <Button className='rounded-2xl font-normal text-sm py-2'>
-                    10 Sec
-                </Button>
-                <Button className='rounded-2xl font-medium text-sm py-2 box-border' variant='outline'>
-                    Quiz <ChevronDown size={15} />
-                </Button>
+                <Dropdown className='rounded-2xl font-normal text-sm py-2' defaultValue={timeOptions[0]} dropdownOptions={timeOptions} externalSetter={handleTimeChange} />
+                <Dropdown className='rounded-2xl font-normal text-sm py-2' defaultValue={'Quiz'} dropdownOptions={['Quiz']} externalSetter={handleTypeChange} />
             </div>
-            <label htmlFor="quiz_question" ref={inputParent} onClick={() => setIsOpenQuestion(true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
+            <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
                     IsOpenQuestion ? <TextareaAutosize name='quiz_question' onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }

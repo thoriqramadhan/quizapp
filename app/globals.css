@@ -21,17 +21,20 @@ body {
 }
 
 @layer components {
-  .flex-all-center{
-    @apply flex justify-center items-center
+  .flex-all-center {
+    @apply flex justify-center items-center;
   }
-  .flex-y-center{
-    @apply flex items-center
+  .flex-y-center {
+    @apply flex items-center;
   }
-  .flex-h-center{
-    @apply flex justify-center
+  .flex-h-center {
+    @apply flex justify-center;
   }
   .transition-300 {
     @apply transition-all duration-300;
+  }
+  .transition-500 {
+    @apply transition-all duration-500;
   }
   /* typhography */
   .text-title {
@@ -42,5 +45,10 @@ body {
   }
   .text-description {
     @apply text-sm font-light tracking-wider text-slate-700;
+  }
+
+  /* browser */
+  .scrollbar-thin {
+    scrollbar-width: thin;
   }
 }
