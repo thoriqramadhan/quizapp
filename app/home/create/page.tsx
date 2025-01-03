@@ -7,6 +7,7 @@ import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
 import { useQuiz } from '@/lib/context/createQuiz';
 import { validateString } from '@/lib/validations/global';
+import { getChoiceAplhabet } from '@/utils/typhography';
 import { questionObjectInitiator } from '@/utils/utils';
 import { ArrowLeft, ChevronDown, CircleEllipsis, Plus } from 'lucide-react';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -127,8 +128,10 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     }
     const [questionObject, setQuestionObject] = useState<QuestionObject>(question!.quiz[question.pageAt - 1] || questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
-
+    const questionData = question.quiz[question.pageAt - 1]?.question ?? '';
     const timeOptions = [5, 10, 15, 20]
+    console.log(questionObject);
+
 
     function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
@@ -178,17 +181,6 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             }
         })
     }
-    function getChoiceAplhabet(index: 0 | 1 | 2 | 3) {
-        if (index == 0) {
-            return 'a.'
-        } else if (index == 1) {
-            return 'b.'
-        } else if (index == 2) {
-            return 'c.'
-        } else {
-            return 'd.'
-        }
-    }
     // Todo 
     /*
         1.Validate all data
@@ -200,13 +192,13 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         const newQuestionObject = question.quiz;
         newQuestionObject[question.pageAt - 1] = questionObject
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
-        questionObjectInitiator(newQuestion)
+        // make a new empty question object
+        newQuestion.quiz?.push(questionObjectInit)
         handleChangeQuestion(newQuestion)
     }
-    // Todo IMPORTANT 
-    /*
-        1.Init value from localeStorage
-     */
+    useEffect(() => {
+        setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
+    }, [question])
     return (
         <>
             <div className="w-full flex gap-x-3">
@@ -214,20 +206,20 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                 <Dropdown className='rounded-2xl font-normal text-sm py-2' defaultValue={'Quiz'} dropdownOptions={['Quiz']} externalSetter={handleTypeChange} />
             </div>
             {/* question */}
-            <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
+            <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
-                    IsOpenQuestion ? <TextareaAutosize name='quiz_question' onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
+                    IsOpenQuestion || questionData ? <TextareaAutosize name='quiz_question' defaultValue={questionData} onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
             {/* answer */}
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} />
+                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} defaultValue={questionObject.choice[0]} />
 
-                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} />
+                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} defaultValue={questionObject.choice[1]} />
 
-                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} />
+                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} defaultValue={questionObject.choice[2]} />
 
-                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} />
+                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} defaultValue={questionObject.choice[3]} />
 
             </section>
             <QuestionView handleSubmit={handleSubmit} />
@@ -244,9 +236,12 @@ const QuestionView: FC<QuestionViewProps> = ({ handleSubmit }) => {
         console.log('clicked main');
         handleChangeQuestion({ ...question, pageAt: 0 })
     }
+    function handleCard(cardIndex: number) {
+        handleChangeQuestion({ ...question, pageAt: cardIndex })
+    }
 
     return (
-        <section className='w-full py-5 border-t-[3px] flex-y-center gap-x-10 justify-between' onClick={handleSubmit}>
+        <section className='w-full py-5 border-t-[3px] flex-y-center gap-x-10 justify-between'>
             <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
                 {/* main card V*/}
                 <div className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl" onClick={handleMainCard}>
@@ -254,13 +249,14 @@ const QuestionView: FC<QuestionViewProps> = ({ handleSubmit }) => {
                 </div>
                 {
                     question.quiz?.length > 0 && question.quiz!.map((item, index) => (
-                        <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
+                        // card 
+                        <div onClick={() => handleCard(index + 1)} key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
                             <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
                         </div>
                     ))
                 }
             </section>
-            <Button className='p-5 h-fit rounded-xl'><Plus /></Button>
+            <Button className='p-5 h-fit rounded-xl' onClick={handleSubmit}><Plus /></Button>
         </section>
     )
 }
