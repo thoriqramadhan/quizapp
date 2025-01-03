@@ -20,7 +20,6 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
     function handleOpen() {
         setIsOpenAnswer(true)
     }
-    console.log(defaultValue);
 
     useEffect(() => { setIsOpenAnswer(false) }, [defaultValue])
     return <div style={{ backgroundColor: `#${mainColor}`, boxShadow: `0px 10px rgba(${shadowColorRgb}` }} className={cn(` cursor-pointer rounded-xl  flex-all-center overflow-y-auto px-3 relative select-none`, className)} onClick={() => setIsOpenAnswer(true)} {...props}>

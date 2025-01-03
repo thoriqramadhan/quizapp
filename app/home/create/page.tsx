@@ -128,13 +128,14 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     }
     const [questionObject, setQuestionObject] = useState<QuestionObject>(question!.quiz[question.pageAt - 1] || questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
-    const questionData = question.quiz[question.pageAt - 1]?.question ?? '';
+    const questionData = questionObject.question
+
     const timeOptions = [5, 10, 15, 20]
-    console.log(questionObject);
 
 
     function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
+
             setQuestionObject(prev => {
                 return {
                     ...prev,
@@ -142,7 +143,6 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                 }
             })
         }
-
         if (option.isAnswer) {
             if (typeof option.answerIndex !== 'number') {
                 throw new Error('answer index needed.')
@@ -194,7 +194,9 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
         // make a new empty question object
         newQuestion.quiz?.push(questionObjectInit)
-        handleChangeQuestion(newQuestion)
+        console.log(newQuestion);
+
+        // handleChangeQuestion(newQuestion)
     }
     useEffect(() => {
         setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
@@ -208,7 +210,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             {/* question */}
             <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
-                    IsOpenQuestion || questionData ? <TextareaAutosize name='quiz_question' defaultValue={questionData} onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
+                    IsOpenQuestion || questionData ? <TextareaAutosize name='quiz_question' value={questionData} onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
             {/* answer */}
