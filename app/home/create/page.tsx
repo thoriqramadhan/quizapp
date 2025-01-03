@@ -7,6 +7,7 @@ import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
 import { useQuiz } from '@/lib/context/createQuiz';
 import { validateString } from '@/lib/validations/global';
+import { questionObjectInitiator } from '@/utils/utils';
 import { ArrowLeft, ChevronDown, CircleEllipsis, Plus } from 'lucide-react';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
@@ -68,6 +69,10 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
             })
             isError = true
         }
+        if (isError) {
+            return;
+        }
+
         handleChangeQuestion({
             pageAt: question.pageAt + 1,
             projectName: isError ? '' : validateProjectName as string,
@@ -192,19 +197,12 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         4.+1 page now
      */
     function handleSubmit() {
-        const newQuestionObject = question;
-        console.log(question);
-
-        newQuestionObject.quiz[question.pageAt - 1] = questionObject
-        console.log(newQuestionObject, questionObject);
-
-        // handleChangeQuestion({ ...question, quiz: newQuestionObject })
+        const newQuestionObject = question.quiz;
+        newQuestionObject[question.pageAt - 1] = questionObject
+        const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
+        questionObjectInitiator(newQuestion)
+        handleChangeQuestion(newQuestion)
     }
-
-    // useEffect(() => {
-    //     console.log(questionObject);
-
-    // }, [questionObject])
     // Todo IMPORTANT 
     /*
         1.Init value from localeStorage

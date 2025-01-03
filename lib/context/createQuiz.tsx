@@ -1,4 +1,5 @@
 'use client'
+import { questionObjectInitiator } from "@/utils/utils";
 import { createContext, useContext, useEffect, useState } from "react";
 
 
@@ -25,7 +26,6 @@ export function useQuiz() {
 
 export function QuizProvider({ children }) {
     const initialQuestionObject = {
-        isInitial: true,
         pageAt: 0,
         projectName: '',
         coverImg: '',
@@ -45,17 +45,9 @@ export function QuizProvider({ children }) {
     useEffect(() => {
         localStorage.setItem('createQuestion', JSON.stringify(question))
         if (question.quiz?.length == 0) {
-            const newQuestionObject = question
-            const questionObjectInit = {
-                question: '',
-                type: 'quiz',
-                time: '',
-                choice: [],
-                correctChoice: ''
-            }
-            newQuestionObject.quiz?.push(questionObjectInit)
-            localStorage.setItem('createQuestion', JSON.stringify(newQuestionObject))
+            questionObjectInitiator(question)
         }
+        // setQuestion()
     }, [question])
 
     return <QuizContext.Provider value={{ question, handleChangeQuestion }}>
