@@ -32,7 +32,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
             </div>
             {/* question */}
             {
-                !question.isInitial ? (
+                !question.pageAt == 0 ? (
                     <>
                         <AnswerContainer />
                     </>
@@ -69,7 +69,7 @@ const InitialQuestion: FC<InitialQuestionProps> = () => {
             isError = true
         }
         handleChangeQuestion({
-            isInitial: false,
+            pageAt: question.pageAt + 1,
             projectName: isError ? '' : validateProjectName as string,
             coverImg: '',
             tags: isError ? '' : validateTags as string,
@@ -120,7 +120,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         choice: [],
         correctChoice: ''
     }
-    const [questionObject, setQuestionObject] = useState<QuestionObject>(questionObjectInit)
+    const [questionObject, setQuestionObject] = useState<QuestionObject>(question!.quiz[question.pageAt - 1] || questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
 
     const timeOptions = [5, 10, 15, 20]
@@ -184,24 +184,45 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             return 'd.'
         }
     }
+    // Todo 
+    /*
+        1.Validate all data
+        2.save to localeStorage
+        3.reset all data 
+        4.+1 page now
+     */
+    function handleSubmit() {
+        const newQuestionObject = question;
+        console.log(question);
 
-    useEffect(() => {
-        console.log(questionObject);
+        newQuestionObject.quiz[question.pageAt - 1] = questionObject
+        console.log(newQuestionObject, questionObject);
 
-    }, [questionObject])
+        // handleChangeQuestion({ ...question, quiz: newQuestionObject })
+    }
+
+    // useEffect(() => {
+    //     console.log(questionObject);
+
+    // }, [questionObject])
+    // Todo IMPORTANT 
+    /*
+        1.Init value from localeStorage
+     */
     return (
         <>
             <div className="w-full flex gap-x-3">
                 <Dropdown className='rounded-2xl font-normal text-sm py-2' defaultValue={timeOptions[0]} dropdownOptions={timeOptions} externalSetter={handleTimeChange} />
                 <Dropdown className='rounded-2xl font-normal text-sm py-2' defaultValue={'Quiz'} dropdownOptions={['Quiz']} externalSetter={handleTypeChange} />
             </div>
+            {/* question */}
             <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} defaultValue={''} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
                     IsOpenQuestion ? <TextareaAutosize name='quiz_question' onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
+            {/* answer */}
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <input type="radio" name='correctChoice' hidden onChange={(e) => console.log(e.target.value)} />
                 <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} />
 
                 <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} />
@@ -211,28 +232,30 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
                 <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} />
 
             </section>
-            <QuestionView />
+            <QuestionView handleSubmit={handleSubmit} />
         </>
     )
 }
-interface QuestionViewProps { }
+interface QuestionViewProps {
+    handleSubmit: () => void
+}
 
-const QuestionView: FC<QuestionViewProps> = () => {
+const QuestionView: FC<QuestionViewProps> = ({ handleSubmit }) => {
     const { question, handleChangeQuestion } = useQuiz()
     function handleMainCard() {
         console.log('clicked main');
-        handleChangeQuestion({ ...question, isInitial: !question.isInitial })
-
+        handleChangeQuestion({ ...question, pageAt: 0 })
     }
+
     return (
-        <section className='w-full py-5 border-y-[3px] flex-y-center gap-x-10 justify-between'>
+        <section className='w-full py-5 border-t-[3px] flex-y-center gap-x-10 justify-between' onClick={handleSubmit}>
             <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
                 {/* main card V*/}
                 <div className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl" onClick={handleMainCard}>
                     <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>Main</span>
                 </div>
                 {
-                    question.quiz!.map((item, index) => (
+                    question.quiz?.length > 0 && question.quiz!.map((item, index) => (
                         <div key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
                             <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
                         </div>
