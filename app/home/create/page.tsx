@@ -130,6 +130,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
     const questionData = questionObject.question
 
+
     const timeOptions = [5, 10, 15, 20]
 
 
@@ -181,7 +182,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             }
         })
     }
-    // Todo 
+    // Todo handleSubmit
     /*
         1.Validate all data
         2.save to localeStorage
@@ -194,13 +195,14 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
         // make a new empty question object
         newQuestion.quiz?.push(questionObjectInit)
-        console.log(newQuestion);
+        console.log(newQuestion.quiz);
 
-        // handleChangeQuestion(newQuestion)
+        handleChangeQuestion(newQuestion)
     }
     useEffect(() => {
         setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
     }, [question])
+    // TODO INIT CORRECTANSWER
     return (
         <>
             <div className="w-full flex gap-x-3">
@@ -215,13 +217,13 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             </label>
             {/* answer */}
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} defaultValue={questionObject.choice[0]} />
+                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[0], defaultCorrectAnswer: questionObject.correctChoice }} />
 
-                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} defaultValue={questionObject.choice[1]} />
+                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[1], defaultCorrectAnswer: questionObject.correctChoice }} />
 
-                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} defaultValue={questionObject.choice[2]} />
+                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[2], defaultCorrectAnswer: questionObject.correctChoice }} />
 
-                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} defaultValue={questionObject.choice[3]} />
+                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[3], defaultCorrectAnswer: questionObject.correctChoice }} />
 
             </section>
             <QuestionView handleSubmit={handleSubmit} />

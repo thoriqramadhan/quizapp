@@ -17,10 +17,10 @@ export function getChoiceAplhabet(index: 0 | 1 | 2 | 3) {
     }
 }
 
-export function getChoiceWithoutAlphabet(value: string) {
+export function getChoiceWithoutAlphabet(value: string , index: 0 | 1) {
     if (!value) {
         return ''
     }
     const splitedValue = value.split('.')
-    return splitedValue[1] 
+    return splitedValue[index ?? 1] 
 }
