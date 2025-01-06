@@ -202,7 +202,6 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     useEffect(() => {
         setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
     }, [question])
-    // TODO INIT CORRECTANSWER
     return (
         <>
             <div className="w-full flex gap-x-3">
@@ -212,7 +211,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             {/* question */}
             <label htmlFor="quiz_question" onClick={() => setIsOpenQuestion(true)} className='w-full border-[3px] min-h-[100px] max-h-fit flex rounded-2xl items-center justify-center bg-zinc-50 cursor-pointer overflow-y-auto'>
                 {
-                    IsOpenQuestion || questionData ? <TextareaAutosize name='quiz_question' value={questionData} onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
+                    IsOpenQuestion || questionData ? <TextareaAutosize name='quiz_question' value={questionData} onChange={(event) => handleChange({ isQuestion: true }, event.target.value)} className='outline-0 text-center bg-transparent text-medium  font-medium text-zinc-600  w-[500px] resize-none my-2' /> : <h1 className='text-medium font-medium text-zinc-600'>Tap to add question</h1>
                 }
             </label>
             {/* answer */}
