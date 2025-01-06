@@ -2,7 +2,7 @@
 import { optionProps } from "@/app/home/create/page";
 import { cn } from "@/utils/style"
 import { getChoiceAplhabet, getChoiceWithoutAlphabet } from "@/utils/typhography";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { FC, useEffect, useState } from "react"
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -46,4 +46,25 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
             <Check size={15} color="#69f034" className="invisible peer-checked:visible" />
         </label>
     </div>
+}
+
+
+import { FC } from 'react';
+import { useModal } from "@/lib/context/modal";
+
+interface ModalCardProps {
+
+}
+
+export const ModalCard: FC<ModalCardProps> = ({ }) => {
+    const { modalText, isOpen, modalHandler } = useModal()
+    return (
+        <>
+            {
+                <div className={cn(`${isOpen ? 'top-5' : '-top-20'} z-[100] transition-300 min-w-[100px] bg-white rounded-lg border shadow-sm py-6 px-7 absolute left-1/2 flex-all-center`)}>
+                    <X className="absolute top-2 right-2 cursor-pointer" size={13} color="red" onClick={() => modalHandler({ changeModalState: true })} />
+                    {modalText}</div>
+            }
+        </>
+    );
 }

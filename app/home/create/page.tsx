@@ -6,6 +6,7 @@ import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
 import { useQuiz } from '@/lib/context/createQuiz';
+import { useModal } from '@/lib/context/modal';
 import { validateString } from '@/lib/validations/global';
 import { getChoiceAplhabet } from '@/utils/typhography';
 import { questionObjectInitiator } from '@/utils/utils';
@@ -119,6 +120,7 @@ type QuestionObject = {
 }
 const AnswerContainer: FC<AnswerContainerProps> = () => {
     const { question, handleChangeQuestion } = useQuiz()
+    const { modalHandler } = useModal()
     const questionObjectInit = {
         question: '',
         type: 'quiz',
@@ -195,9 +197,8 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
         // make a new empty question object
         newQuestion.quiz?.push(questionObjectInit)
-        console.log(newQuestion.quiz);
-
         handleChangeQuestion(newQuestion)
+        modalHandler({ changeModalState: true, changeModalText: 'Testing ngab', autoClose: true })
     }
     useEffect(() => {
         setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
