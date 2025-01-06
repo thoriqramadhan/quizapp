@@ -138,7 +138,7 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     const questionData = questionObject.question
     const timeOptions = [5, 10, 15, 20]
 
-
+    //todo CHANGE CHOICE BUG
     function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
 
@@ -153,12 +153,15 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             if (typeof option.answerIndex !== 'number') {
                 throw new Error('answer index needed.')
             }
-            const choiceReference = questionObject.choice
-            choiceReference[option!.answerIndex!] = `${getChoiceAplhabet(option!.answerIndex!)}${value}`
+            // if (value?.length == 0) {
+            //     return;
+            // }
+            const choiceReference = questionObject
+            choiceReference.choice[option!.answerIndex!] = `${getChoiceAplhabet(option!.answerIndex!)}${value}`
             setQuestionObject(prev => {
                 return {
                     ...prev,
-                    choice: choiceReference
+                    choice: choiceReference.choice
                 }
             })
         }
@@ -192,10 +195,11 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         newQuestionObject[question.pageAt - 1] = questionObject
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
         // make a new empty question object
-        newQuestion.quiz?.push(questionObjectInit)
         // validating quiz object
         validateQuizObject(question.quiz[question.pageAt - 1])
         if (!isError) {
+            console.log('Created!');
+            newQuestion.quiz?.push(questionObjectInit)
             handleChangeQuestion(newQuestion)
         }
     }

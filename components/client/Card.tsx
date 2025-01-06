@@ -1,5 +1,6 @@
 'use client'
 import { optionProps } from "@/app/home/create/page";
+import { useModal } from "@/lib/context/modal";
 import { cn } from "@/utils/style"
 import { getChoiceAplhabet, getChoiceWithoutAlphabet } from "@/utils/typhography";
 import { Check, DivideIcon, X } from "lucide-react";
@@ -50,8 +51,6 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
 }
 
 
-import { FC } from 'react';
-import { useModal } from "@/lib/context/modal";
 
 interface ModalCardProps {
 
