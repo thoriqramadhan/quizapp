@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/client/Button';
 import { CardAnswer } from '@/components/client/Card';
-import Dropdown from '@/components/client/Dropdown';
+import { Dropdown, DropdownItem, OptionDropdown } from '@/components/client/Dropdown';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
@@ -9,9 +9,8 @@ import { useQuiz } from '@/lib/context/createQuiz';
 import { useModal } from '@/lib/context/modal';
 import { validateString } from '@/lib/validations/global';
 import { getChoiceAplhabet } from '@/utils/typhography';
-import { questionObjectInitiator } from '@/utils/utils';
-import { ArrowLeft, ChevronDown, CircleEllipsis, Plus } from 'lucide-react';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Plus } from 'lucide-react';
+import React, { FC, useEffect, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -31,7 +30,9 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     <ArrowLeft className='cursor-pointer' />
                     <h1 className='text-title'>Create Quiz</h1>
                 </span>
-                <CircleEllipsis className='cursor-pointer' />
+                <OptionDropdown optionAlign='center' >
+                    <DropdownItem value={'testingdadaaddaadsasdads'} />
+                </OptionDropdown>
             </div>
             {/* question */}
             {
@@ -119,6 +120,7 @@ type QuestionObject = {
     correctChoice: string
 }
 const AnswerContainer: FC<AnswerContainerProps> = () => {
+    // states
     const { question, handleChangeQuestion } = useQuiz()
     const { modalHandler } = useModal()
     const questionObjectInit = {
@@ -130,9 +132,10 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     }
     const [questionObject, setQuestionObject] = useState<QuestionObject>(question!.quiz[question.pageAt - 1] || questionObjectInit)
     const [IsOpenQuestion, setIsOpenQuestion] = useState(false)
+    let isError = false;
+
+    // references
     const questionData = questionObject.question
-
-
     const timeOptions = [5, 10, 15, 20]
 
 
@@ -184,21 +187,37 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             }
         })
     }
-    // Todo handleSubmit
-    /*
-        1.Validate all data
-        2.save to localeStorage
-        3.reset all data 
-        4.+1 page now
-     */
     function handleSubmit() {
         const newQuestionObject = question.quiz;
         newQuestionObject[question.pageAt - 1] = questionObject
         const newQuestion = { ...question, quiz: newQuestionObject, pageAt: question.pageAt + 1 }
         // make a new empty question object
         newQuestion.quiz?.push(questionObjectInit)
-        handleChangeQuestion(newQuestion)
-        modalHandler({ changeModalState: true, changeModalText: 'Testing ngab', autoClose: true })
+        // validating quiz object
+        validateQuizObject(question.quiz[question.pageAt - 1])
+        if (!isError) {
+            handleChangeQuestion(newQuestion)
+        }
+    }
+    function validateQuizObject(currentQuiz: QuestionObject) {
+        const errors = [];
+        if (currentQuiz.choice.length < 4) {
+            errors.push('All choice must be inserted.')
+            isError = true
+        }
+        if (!currentQuiz.correctChoice) {
+            errors.push('Correct answer must be checked.')
+            isError = true
+        }
+        if (!currentQuiz.question) {
+            errors.push('Question must be inserted.')
+            isError = true
+        }
+        if (isError) {
+            const modalTextBuilder = errors.map((text, index) => `${index + 1}.${text}`).join('<br/>')
+            modalHandler({ changeModalState: true, changeModalText: modalTextBuilder, autoClose: true })
+        }
+        return;
     }
     useEffect(() => {
         setQuestionObject(question!.quiz[question.pageAt - 1] || questionObjectInit)
@@ -246,7 +265,7 @@ const QuestionView: FC<QuestionViewProps> = ({ handleSubmit }) => {
 
     return (
         <section className='w-full py-5 border-t-[3px] flex-y-center gap-x-10 justify-between'>
-            <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto'>
+            <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto scrollbar-thin'>
                 {/* main card V*/}
                 <div className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl" onClick={handleMainCard}>
                     <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>Main</span>

@@ -47,7 +47,6 @@ export function QuizProvider({ children }) {
         if (question.quiz?.length == 0) {
             questionObjectInitiator(question)
         }
-        // setQuestion()
     }, [question])
 
     return <QuizContext.Provider value={{ question, handleChangeQuestion }}>

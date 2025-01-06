@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 
 type ModalContextType = {
@@ -21,7 +21,7 @@ type modalOption = {
 }
 export function ModalProvider({ children }: { children: React.ReactNode }) {
     const [modalText, setModalText] = useState('Input your text')
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
     function modalHandler(config: modalOption) {
         if (config.changeModalState) {
             setIsOpen(prev => !prev)
@@ -36,7 +36,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             }, 2000)
         }
     }
-
     return <ModalContext.Provider value={{ modalText, isOpen, modalHandler }}>
         {children}
     </ModalContext.Provider>
