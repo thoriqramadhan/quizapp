@@ -9,7 +9,7 @@ import { useQuiz } from '@/lib/context/createQuiz';
 import { useModal } from '@/lib/context/modal';
 import { validateString } from '@/lib/validations/global';
 import { getChoiceAplhabet } from '@/utils/typhography';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -22,6 +22,16 @@ interface PageProps {
 // Parent Only for controlling page switch & save question to localeStorage
 const CreateQuiz: FC<PageProps> = ({ }) => {
     const { question, handleChangeQuestion } = useQuiz()
+    function handleDeleteQuestion() {
+        const newQuizObject = question.quiz?.filter((quiz, index) => index !== question.pageAt - 1)
+        handleChangeQuestion({
+            ...question,
+            quiz: newQuizObject,
+            pageAt: question.pageAt - 1
+        })
+        console.log('deleted');
+        console.log(newQuizObject);
+    }
     return <>
         <article className="space-y-5 overflow-hidden w-full">
             {/* V Options */}
@@ -31,7 +41,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     <h1 className='text-title'>Create Quiz</h1>
                 </span>
                 <OptionDropdown optionAlign='center' >
-                    <DropdownItem value={'testingdadaaddaadsasdads'} />
+                    <DropdownItem value={'Delete'} icon={<Trash2 />} callbackFn={handleDeleteQuestion} />
                 </OptionDropdown>
             </div>
             {/* question */}
@@ -193,19 +203,22 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         // make a new empty question object
         // validating quiz object
         validateQuizObject(question.quiz[question.pageAt - 1])
+
         if (!isError) {
-            // console.log(!isError);
             console.log('Created!');
             newQuestion.quiz?.push(questionObjectInit)
-            // handleChangeQuestion(newQuestion)
+            handleChangeQuestion(newQuestion)
         }
     }
-    // todo VALIDATION ERROR , STATE SALAH MASIH TEMBUS
+    // bug yang terjadi karena sparseArray atau elemen kosong karena kita init langsung ke index 3 maka 0,1,2 akan di isi kosong dan sparse array ini unik
+    // karena dia tetap terhitung 4 lengthnya jika di console dan ketika di mapping maka dia akan terskip jika elemen itu sparse array.
     function validateQuizObject(currentQuiz: QuestionObject) {
         const errors = [];
-        const isChoiceValid = currentQuiz.choice.every(choice => typeof choice === 'string' && choice.trim().length > 0)
-        console.log(isChoiceValid)
+        // jika elemen kosong / empty / undefined maka diganti menjadi string kosong
+        const cleanedChoice = Array.from(currentQuiz.choice).map(choice => (choice && typeof choice === 'string' ? choice : ''));
 
+        // mengecek jika setiap elemen length lebih dari 0 maka true
+        const isChoiceValid = cleanedChoice.every(choice => choice.length > 0)
         if (!isChoiceValid) {
             errors.push('All choice must be inserted.')
             isError = true

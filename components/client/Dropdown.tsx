@@ -1,7 +1,7 @@
 'use client'
 import { cn } from '@/utils/style';
 import clsx from 'clsx';
-import { ChevronDown, CircleEllipsis } from 'lucide-react';
+import { ChevronDown, CircleEllipsis, Trash } from 'lucide-react';
 import React, { cloneElement, Dispatch, FC, HTMLAttributes, SetStateAction, useEffect, useState } from 'react';
 import { number } from 'zod';
 
@@ -46,7 +46,7 @@ interface DropdownItemContainerProps {
 }
 
 export const DropdownItemContainer: FC<DropdownItemContainerProps> = ({ children, isOpen, optionContainerAlign }) => {
-    return <section className={cn(`z-50 absolute top-[calc(100%+5px)] rounded-md max-h-[300px] min-w-[100px] overflow-x-hidden overflow-y-auto max-w-[185px] bg-red-500 scrollbar-thin shadow-md border transition-500 ${!isOpen && 'overflow-y-hidden h-[0px] border-none'}`, { '-translate-x-[calc(87%)]': optionContainerAlign == 'left' })}>
+    return <section className={cn(`z-50 absolute top-[calc(100%+5px)] scrollbar-thin rounded-md max-h-[300px] min-w-[100px] overflow-x-hidden overflow-y-auto max-w-[185px] bg-red-500 scrollbar-thin shadow-md border transition-500 ${!isOpen && 'overflow-y-hidden h-[0px] border-none'}`, { '-translate-x-[calc(87%)]': optionContainerAlign == 'left' })}>
         {children}
     </section>
 }
@@ -56,29 +56,36 @@ interface DropdownItemProps extends HTMLAttributes<HTMLDivElement> {
     value: string | number,
     className?: string,
     callbackFn?: () => void | undefined,
-    setter?: Dispatch<SetStateAction<string | number>>
+    setter?: Dispatch<SetStateAction<string | number>>,
+    icon?: React.ReactNode
 }
 
-export const DropdownItem: FC<DropdownItemProps> = ({ optionAlign, value, className, setter, callbackFn, ...props }) => {
+export const DropdownItem: FC<DropdownItemProps> = ({ optionAlign, value, className, icon, setter, callbackFn, ...props }) => {
     const getOnClickHandler = () => {
         if (callbackFn) {
             callbackFn()
             console.log('called callback');
 
         } else {
-            setter!(value)
+            setter(value)
             console.log('called setter');
 
         }
     }
-    return <div className={cn('w-full py-1 px-2 max-h-[32px] whitespace-nowrap text-truncate overflow-y-auto bg-white transition-300 cursor-pointer hover:bg-zinc-50', {
+    const enhanceIcon = () => {
+        if (React.isValidElement(icon)) {
+            return cloneElement(icon, { size: 13 })
+        }
+        return icon
+    }
+    return <div className={cn('w-full py-1 px-2 max-h-[32px] scrollbar-thin truncate overflow-x-hidden overflow-y-auto bg-white transition-300 cursor-pointer hover:bg-zinc-50 gap-x-1', {
         '': optionAlign == 'left',
         'flex-all-center': optionAlign == 'center',
         'flex justify-end items-center': optionAlign == 'right',
     }, className)} {...props}
         onClick={getOnClickHandler}
     >
-        {value.toString()}
+        {enhanceIcon()} {value.toString()}
     </div>
 }
 
@@ -102,7 +109,6 @@ export const OptionDropdown: FC<OptionDropdownProps> = ({ optionAlign, dropdownO
             <div className="relative">
                 <CircleEllipsis className='cursor-pointer' onClick={() => setisOpen(prev => !prev)} />
                 <DropdownItemContainer isOpen={isOpen} optionContainerAlign='left'>
-                    <DropdownItem optionAlign={optionAlign} value={'Hello'} />
                     {enhancedChildren}
                 </DropdownItemContainer>
             </div>
