@@ -5,7 +5,7 @@ import { Container } from '@/components/server/Container';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import Loading from '@/components/server/Loading';
-import { InputBoolean } from '@/components/server/ui/Input';
+import { InputBoolean, InputLiteral } from '@/components/server/ui/Input';
 import Label from '@/components/server/ui/Label';
 import { login } from '@/lib/action/auth';
 import Link from 'next/link';
@@ -31,9 +31,15 @@ const Page: FC<PageProps> = ({ }) => {
         <CardLayout className='border-none shadow-none py-20 h-full md:w-[60%] lg:w-[50%]'>
             <h1 className='text-title'>Login</h1>
             <form action={loginAction} className='mt-5 space-y-5 h-full flex flex-col justify-between'>
-                <section className='space-y-5'>
-                    <InputSection name='email' type='email' isRequired={true} error={isEmailInvalid ?? <ErrorMessage text={isEmailInvalid} />} />
-                    <InputSection name='password' type='password' isRequired={true} error={isPasswordInvalid ?? <ErrorMessage text={isPasswordInvalid} />} />
+                <section className='space-y-5' >
+                    <InputSection name='email' error={isEmailInvalid ?? <ErrorMessage text={isEmailInvalid} />} isRequired={true}>
+                        <InputLiteral name='email' type='email' />
+                    </InputSection>
+                    <InputSection name='password' error={isPasswordInvalid ?? <ErrorMessage text={isPasswordInvalid} />} isRequired={true}>
+                        <InputLiteral name='password' type='password' />
+                    </InputSection>
+                    {/* <InputSection name='email' type='email' isRequired={true} error={isEmailInvalid ?? <ErrorMessage text={isEmailInvalid} />} /> */}
+                    {/* <InputSection name='password' type='password' isRequired={true} error={isPasswordInvalid ?? <ErrorMessage text={isPasswordInvalid} />} /> */}
                     <span className="flex justify-between">
                         <span className='flex gap-x-3'>
                             <InputBoolean name='remind_me' type='checkbox' />
