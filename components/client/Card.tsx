@@ -81,3 +81,23 @@ export const ModalCard: FC<ModalCardProps> = ({ }) => {
         </>
     );
 }
+
+
+
+interface QuizCardProps {
+
+}
+
+export const QuizCard: FC<QuizCardProps> = ({ }) => {
+    return <div className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
+        <span className='w-full h-[40%] block bg-zinc-50'>
+        </span>
+        <div className="p-5 flex-1">
+            <p className='h-[40%] text-medium'>Hello this </p>
+        </div>
+        <div className="w-full p-5 flex gap-3 flex-y-center">
+            <span className='block w-10 h-10 bg-zinc-50 rounded-full'></span>
+            <p className='font-medium'>Arthur Rogan</p>
+        </div>
+    </div>
+}
