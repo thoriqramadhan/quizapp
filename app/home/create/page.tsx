@@ -9,7 +9,7 @@ import { useQuiz } from '@/lib/context/createQuiz';
 import { useModal } from '@/lib/context/modal';
 import { validateString } from '@/lib/validations/global';
 import { getChoiceAplhabet } from '@/utils/typhography';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Check, Plus, Trash2 } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { IoMdImage } from 'react-icons/io';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -32,6 +32,24 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
         console.log('deleted');
         console.log(newQuizObject);
     }
+    async function createQuestion() {
+        try {
+            const response = await fetch('/api/createQuiz', { method: 'POST', body: JSON.stringify({ question }) })
+            if (response.ok) {
+                localStorage.removeItem('createQuestion')
+                const initialQuestionObject = {
+                    pageAt: 0,
+                    projectName: '',
+                    coverImg: '',
+                    tags: '',
+                    quiz: []
+                }
+                handleChangeQuestion(initialQuestionObject)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return <>
         <article className="space-y-5 overflow-hidden w-full">
             {/* V Options */}
@@ -42,6 +60,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                 </span>
                 <OptionDropdown optionAlign='center' >
                     <DropdownItem value={'Delete'} icon={<Trash2 />} callbackFn={handleDeleteQuestion} />
+                    <DropdownItem value={'Done'} icon={<Check />} callbackFn={createQuestion} />
                 </OptionDropdown>
             </div>
             {/* question */}
