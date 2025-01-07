@@ -51,7 +51,7 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
         }
     }
     return <>
-        <article className="space-y-5 overflow-hidden w-full">
+        <article className="overflow-hidden w-full space-y-5">
             {/* V Options */}
             <div className='flex justify-between items-center w-full'>
                 <span className='flex items-center gap-x-5'>

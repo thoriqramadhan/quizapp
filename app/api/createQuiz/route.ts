@@ -6,6 +6,7 @@ import { prisma } from "@/utils/db";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+// todo validation
 export async function POST(req: NextRequest,) {
     try {
         const body = await req.json()
