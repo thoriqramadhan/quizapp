@@ -1,6 +1,6 @@
 'use client'
 import { Button } from '@/components/client/Button';
-import { CardAnswer } from '@/components/client/Card';
+import { CardAnswer, QuestionViewCard } from '@/components/client/Card';
 import { Dropdown, DropdownItem, OptionDropdown } from '@/components/client/Dropdown';
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
@@ -287,15 +287,11 @@ const QuestionView: FC<QuestionViewProps> = ({ handleSubmit }) => {
         <section className='w-full py-5 border-t-[3px] flex-y-center gap-x-10 justify-between'>
             <section className=' max-w-[calc(100%-40px)] flex space-x-5 overflow-x-auto scrollbar-thin'>
                 {/* main card V*/}
-                <div className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl" onClick={handleMainCard}>
-                    <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>Main</span>
-                </div>
+                <QuestionViewCard title='Main' isSelected={question.pageAt == 0} onClick={handleMainCard} />
                 {
                     question.quiz?.length > 0 && question.quiz!.map((item, index) => (
                         // card 
-                        <div onClick={() => handleCard(index + 1)} key={index} className="w-[240px] h-[120px] relative shrink-0 bg-zinc-50 border-[#5E40D2] border-[4px] cursor-pointer rounded-2xl">
-                            <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl text-white'>{index + 1}</span>
-                        </div>
+                        <QuestionViewCard key={index} title={index + 1} isSelected={question.pageAt - 1 == index} onClick={() => handleCard(index + 1)} />
                     ))
                 }
             </section>

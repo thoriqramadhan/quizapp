@@ -4,7 +4,7 @@ import { useModal } from "@/lib/context/modal";
 import { cn } from "@/utils/style"
 import { getChoiceAplhabet, getChoiceWithoutAlphabet } from "@/utils/typhography";
 import { Check, DivideIcon, X } from "lucide-react";
-import { FC, useEffect, useState } from "react"
+import { FC, HTMLAttributes, useEffect, useState } from "react"
 import TextareaAutosize from 'react-textarea-autosize';
 import DOMPurify from 'dompurify'
 
@@ -47,6 +47,17 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
             <input type="radio" name="correctChoice" id={`correctChoice-${choiceIndex}`} checked={getCorrectAnswer()} hidden className="peer" onChange={() => handleChange({ isSetCorrectChoice: true, answerIndex: choiceIndex })} />
             <Check size={15} color="#69f034" className="invisible peer-checked:visible" />
         </label>
+    </div>
+}
+
+
+interface QuestionViewCardProps extends HTMLAttributes<HTMLDivElement> {
+    isSelected: boolean,
+    title: string | number
+}
+export const QuestionViewCard: FC<QuestionViewCardProps> = ({ isSelected, title, ...props }) => {
+    return <div className={`w-[240px] h-[120px] relative shrink-0 bg-zinc-50 cursor-pointer rounded-2xl ${isSelected && 'border-[4px] border-[#5E40D2]'}`} {...props} >
+        <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl rounded-tl-xl text-white'>{title}</span>
     </div>
 }
 
