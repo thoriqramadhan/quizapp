@@ -138,7 +138,6 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
     const questionData = questionObject.question
     const timeOptions = [5, 10, 15, 20]
 
-    //todo CHANGE CHOICE BUG
     function handleChange(option: optionProps, value?: string) {
         if (option.isQuestion) {
 
@@ -153,11 +152,8 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             if (typeof option.answerIndex !== 'number') {
                 throw new Error('answer index needed.')
             }
-            // if (value?.length == 0) {
-            //     return;
-            // }
             const choiceReference = questionObject
-            choiceReference.choice[option!.answerIndex!] = `${getChoiceAplhabet(option!.answerIndex!)}${value}`
+            choiceReference.choice[option!.answerIndex!] = value!.length > 0 ? `${getChoiceAplhabet(option!.answerIndex!)}${value}` : ''
             setQuestionObject(prev => {
                 return {
                     ...prev,
@@ -198,14 +194,19 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         // validating quiz object
         validateQuizObject(question.quiz[question.pageAt - 1])
         if (!isError) {
+            // console.log(!isError);
             console.log('Created!');
             newQuestion.quiz?.push(questionObjectInit)
-            handleChangeQuestion(newQuestion)
+            // handleChangeQuestion(newQuestion)
         }
     }
+    // todo VALIDATION ERROR , STATE SALAH MASIH TEMBUS
     function validateQuizObject(currentQuiz: QuestionObject) {
         const errors = [];
-        if (currentQuiz.choice.length < 4) {
+        const isChoiceValid = currentQuiz.choice.every(choice => typeof choice === 'string' && choice.trim().length > 0)
+        console.log(isChoiceValid)
+
+        if (!isChoiceValid) {
             errors.push('All choice must be inserted.')
             isError = true
         }
