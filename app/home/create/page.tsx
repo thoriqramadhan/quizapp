@@ -205,8 +205,10 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
         validateQuizObject(question.quiz[question.pageAt - 1])
 
         if (!isError) {
-            console.log('Created!');
-            newQuestion.quiz?.push(questionObjectInit)
+            const isInlastIndex = question.pageAt == question.quiz?.length
+            if (isInlastIndex) {
+                newQuestion.quiz?.push(questionObjectInit)
+            }
             handleChangeQuestion(newQuestion)
         }
     }
