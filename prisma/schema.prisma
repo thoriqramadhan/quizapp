@@ -23,13 +23,25 @@ model User {
 }
 
 model Quiz {
-  id          Int           @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
   Participant Participant[]
-  User        User          @relation(fields: [authorId], references: [id])
+  User        User           @relation(fields: [authorId], references: [id])
   authorId    Int
-  quizType    quizType?     @relation(fields: [quizTypeId], references: [id])
+  quizType    quizType?      @relation(fields: [quizTypeId], references: [id])
   quizTypeId  Int?
+  question    QuizQuestion[]
+}
+
+model QuizQuestion {
+  id            Int      @id @default(autoincrement())
+  question      String
+  type          String
+  time          String
+  choice        String[]
+  correctChoice String
+  quizId        Int
+  Quiz          Quiz     @relation(fields: [quizId], references: [id])
 }
 
 model quizType {

@@ -14,3 +14,7 @@ export async function getEmail(email: string) {
         return null
     }
 }
+
+export async function getUserByName(name: string) {
+    
+}
