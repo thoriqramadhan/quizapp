@@ -1,3 +1,4 @@
+import { UserDb } from "./auth"
 
 
 interface QuestionObjectDB{
@@ -14,7 +15,7 @@ interface QuizObject {
     id:number,
     name:string,
     Participant? :Participant[]
-    User?:User,    
+    User?: UserDb,    
     authorId:Int,
     question: QuestionObjectDB[],    
     quizTypeId?:number
