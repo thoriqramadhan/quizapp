@@ -23,7 +23,7 @@ export async function getUserByName(name: string) {
 type optionProps = {
     with: ('question' | 'user') []
 }
-export async function getAllQuiz(option?: optionProps) {
+function quizOptionBuilder(option?: optionProps) {
     const optionBuilder = {}
     if (option?.with) {
         optionBuilder.include = {}
@@ -35,10 +35,29 @@ export async function getAllQuiz(option?: optionProps) {
             }
         })
     }
-    console.log(optionBuilder)
+    return optionBuilder
+}
+export async function getAllQuiz(option?: optionProps) {
+    const optionBuilder = quizOptionBuilder(option) 
     try {
         return await prisma.quiz.findMany(optionBuilder)
     } catch (error) {
         return 'Error getting quiz :' + error
+    }
+}
+
+
+export async function getQuizById( id: number,option?: optionProps) {
+    const optionBuilder = quizOptionBuilder(option)
+    try {
+        return await prisma.quiz.findFirst({
+            where: {
+                id
+            },
+            ...optionBuilder
+        }
+        )
+    } catch (error) {
+        return 'Error getting quiz ' + error
     }
 }
