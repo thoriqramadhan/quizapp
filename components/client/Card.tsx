@@ -4,7 +4,7 @@ import { useModal } from "@/lib/context/modal";
 import { cn } from "@/utils/style"
 import { getChoiceAplhabet, getChoiceWithoutAlphabet } from "@/utils/typhography";
 import { Check, DivideIcon, X } from "lucide-react";
-import { FC, useEffect, useState } from "react"
+import { FC, HTMLAttributes, useEffect, useState } from "react"
 import TextareaAutosize from 'react-textarea-autosize';
 import DOMPurify from 'dompurify'
 
@@ -51,6 +51,17 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
 }
 
 
+interface QuestionViewCardProps extends HTMLAttributes<HTMLDivElement> {
+    isSelected: boolean,
+    title: string | number
+}
+export const QuestionViewCard: FC<QuestionViewCardProps> = ({ isSelected, title, ...props }) => {
+    return <div className={`w-[240px] h-[120px] relative shrink-0 bg-zinc-50 cursor-pointer rounded-2xl ${isSelected && 'border-[4px] border-[#5E40D2]'}`} {...props} >
+        <span className='absolute bg-[#5E40D2] px-5 py-2 rounded-br-xl rounded-tl-xl text-white'>{title}</span>
+    </div>
+}
+
+
 
 interface ModalCardProps {
 
@@ -69,4 +80,27 @@ export const ModalCard: FC<ModalCardProps> = ({ }) => {
             }
         </>
     );
+}
+
+
+
+interface QuizCardProps {
+    quizObject: QuizObject
+}
+
+export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
+    const { name, User } = quizObject
+    const { name: username, } = User
+
+    return <div className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
+        <span className='w-full h-[40%] block bg-zinc-50'>
+        </span>
+        <div className="p-5 flex-1">
+            <p className='h-[40%] text-medium'>{name} </p>
+        </div>
+        <div className="w-full p-5 flex gap-3 flex-y-center">
+            <span className='block w-10 h-10 bg-zinc-50 rounded-full'></span>
+            <p className='font-medium'>{username}</p>
+        </div>
+    </div>
 }

@@ -52,7 +52,7 @@ export async function login(prevState: any, formData: HTMLFormElement) {
         if (emailResponse!.error || passwordResponse.error) {
             return {status: 400 , errors: {email: email.error , password: passwordResponse.error}}
         }
-        await createSession({ name: dbEmail.name, email: dbEmail.emai })
+        await createSession({ name: dbEmail.name, email: dbEmail.email })
         return {status: 200 , message: 'Success login'}
     } catch (error) {
         return {status: 400}
