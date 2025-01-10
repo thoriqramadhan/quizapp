@@ -1,3 +1,5 @@
+import { QuizObject } from "@/types/questionObject";
+import { getAuthInfo } from "@/utils/auth";
 import { prisma } from "@/utils/db";
 import { optional } from "zod";
 
@@ -60,4 +62,29 @@ export async function getQuizById( id: number,option?: optionProps) {
     } catch (error) {
         return 'Error getting quiz ' + error
     }
+}
+
+export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
+    const authInfo = await getAuthInfo() as number
+    const savedQuizDB = await prisma.user.findFirst({
+        where: {
+            id: authInfo.id
+        },
+        select: {
+            savedQuiz: true
+        }
+    })
+    const newSavedQuiz = Array.isArray(savedQuizDB?.savedQuiz)
+            ? [...savedQuizDB.savedQuiz]
+            : []; 
+    newSavedQuiz?.push(quizData)
+    
+    await prisma.user.update({
+        where: {
+            email: authInfo!.email
+        },
+        data: {
+            savedQuiz: newSavedQuiz
+        }
+    })
 }

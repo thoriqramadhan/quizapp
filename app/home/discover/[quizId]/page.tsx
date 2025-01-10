@@ -1,6 +1,7 @@
-import { Button } from '@/components/client/Button';
+import { Button, PreviewPageButtons } from '@/components/client/Button';
 import OptionDropDownBuilder from '@/components/client/ui/OptionDropDownBuilder';
 import { getQuizById } from '@/helper/db';
+import { handleSubmitPreview } from '@/lib/action/discover';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { FC } from 'react';
@@ -15,7 +16,12 @@ const Page: FC<PageProps> = async ({ params }) => {
     const quizData = await getQuizById(Number(quizId), { with: ['user', 'question'] })
     const { name, User, question } = quizData
     const { name: username } = User;
-    console.log(quizData);
+    async function handleSubmit(formData: FormData) {
+
+        const test = formData.get('selected_method')
+        console.log(test);
+
+    }
 
     const quizStat = [
         {
@@ -88,17 +94,11 @@ const Page: FC<PageProps> = async ({ params }) => {
             </div>
         </section>
 
-        {/* bottomnav */}
-        <div className="flex gap-x-5">
-            <Button className='w-full py-2 rounded-lg'>
-                Save
-            </Button>
-            <Button className='w-full py-2 rounded-lg' variant={'outline'}>
-                Play Solo
-            </Button>
-        </div>
+        {/* bottomn*/}
+        <PreviewPageButtons quizId={Number(quizId)} />
 
     </>
 }
+
 
 export default Page;
