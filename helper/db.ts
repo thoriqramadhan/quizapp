@@ -64,8 +64,26 @@ export async function getQuizById( id: number,option?: optionProps) {
     }
 }
 
+export async function getAllOwnedQuiz() {
+    try {
+        const authInfo = await getAuthInfo()
+        return await prisma.user.findFirst({
+            where: {
+                email: authInfo.email
+            },
+            select: {
+                savedQuiz: true
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
     const authInfo = await getAuthInfo() as number
+    console.log(quizData);
+    
     const savedQuizDB = await prisma.user.findFirst({
         where: {
             id: authInfo.id

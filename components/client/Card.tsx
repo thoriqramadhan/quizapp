@@ -92,7 +92,7 @@ interface QuizCardProps {
 
 export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
     const { name, User, id } = quizObject
-    const { name: username, } = User
+    const { name: username } = User
 
     return <Link href={`/home/discover/${id}`} className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
         <span className='w-full h-[40%] block bg-zinc-50'>
@@ -102,7 +102,7 @@ export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
         </div>
         <div className="w-full p-5 flex gap-3 flex-y-center">
             <span className='block w-10 h-10 bg-zinc-50 rounded-full'></span>
-            <p className='font-medium'>{username}</p>
+            <p className='font-medium'>{username ?? ''}</p>
         </div>
     </Link>
 }
