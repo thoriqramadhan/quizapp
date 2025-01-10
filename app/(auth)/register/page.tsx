@@ -37,10 +37,15 @@ const Regsiter: FC<RegsiterProps> = ({ }) => {
             <h1 className='text-title'>Register</h1>
             <form action={registerAction} className='mt-5 space-y-5 h-full flex flex-col justify-between'>
                 <section className='space-y-5'>
-
-                    <InputSection name='name' type={'text'} isRequired={true} error={isNameError && <ErrorMessage text={isNameError} />} />
-                    <InputSection name='email' type='email' isRequired={true} error={isEmailError && <ErrorMessage text={isEmailError} />} />
-                    <InputSection name='password' type='password' isRequired={true} error={isPasswordError && <ErrorMessage text={isPasswordError} />} />
+                    <InputSection name='name' isRequired={true} error={isNameError && <ErrorMessage text={isNameError} />}>
+                        <InputLiteral name='name' type='text' />
+                    </InputSection>
+                    <InputSection name='email' isRequired={true} error={isEmailError && <ErrorMessage text={isEmailError} />}>
+                        <InputLiteral name='email' type='text' />
+                    </InputSection>
+                    <InputSection name='password' isRequired={true} error={isPasswordError && <ErrorMessage text={isPasswordError} />}>
+                        <InputLiteral name='password' type='password' />
+                    </InputSection>
                     <span className='w-full flex justify-end'>
                         <Link href={'/login'} className='text-sm text-slate-700 hover:underline '>already have an account?</Link>
                     </span>
