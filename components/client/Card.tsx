@@ -7,6 +7,8 @@ import { Check, DivideIcon, X } from "lucide-react";
 import { FC, HTMLAttributes, useEffect, useState } from "react"
 import TextareaAutosize from 'react-textarea-autosize';
 import DOMPurify from 'dompurify'
+import Link from "next/link";
+import { QuizObject } from "@/types/questionObject";
 
 type InitValue = {
     defaultValue: string,
@@ -89,18 +91,18 @@ interface QuizCardProps {
 }
 
 export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
-    const { name, User } = quizObject
+    const { name, User, id } = quizObject
     const { name: username, } = User
 
-    return <div className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
+    return <Link href={`/home/discover/${id}`} className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
         <span className='w-full h-[40%] block bg-zinc-50'>
         </span>
         <div className="p-5 flex-1">
-            <p className='h-[40%] text-medium'>{name} </p>
+            <p className='h-[40%] text-medium'>{name}</p>
         </div>
         <div className="w-full p-5 flex gap-3 flex-y-center">
             <span className='block w-10 h-10 bg-zinc-50 rounded-full'></span>
             <p className='font-medium'>{username}</p>
         </div>
-    </div>
+    </Link>
 }

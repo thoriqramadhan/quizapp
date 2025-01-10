@@ -11,7 +11,7 @@ interface LayoutProps {
 const Layout: FC<LayoutProps> = ({ children }) => {
     return <main className='w-full h-screen min-w-screen flex overflow-x-hidden'>
         <Appbar />
-        <section className='py-5 px-5 md:pl-[180px] min-w-full max-w-full  overflow-x-hidden space-y-5'>
+        <section className='py-5 px-5 md:pl-[180px] min-w-full max-w-full overflow-x-hidden space-y-5'>
             <ModalProvider>
                 <QuizProvider>
                     <ModalCard />
