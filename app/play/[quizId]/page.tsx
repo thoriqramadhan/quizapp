@@ -3,6 +3,7 @@ import { DropdownItem, OptionDropdown } from '@/components/client/Dropdown';
 import _PlayPageContainer from "../[quizId]/_playPageComponents/_playPageContainer"
 import { FC } from 'react';
 import { getQuizById } from '@/helper/db';
+import { QuestionObjectDB } from '@/types/questionObject';
 
 interface PageProps {
     params: Promise<{ quizId: string }>
@@ -10,12 +11,10 @@ interface PageProps {
 
 const Page: FC<PageProps> = async ({ params }) => {
     const quizId = (await params).quizId
-    const quiz = await getQuizById(Number(quizId), { with: ['question'] })
-    console.log(quiz);
-
-
+    const quizObject = await getQuizById(Number(quizId), { with: ['question'] })
+    const questionArray = quizObject!.question as QuestionObjectDB[] | []
     return <article className='py-5 px-10'>
-        <_PlayPageContainer />
+        <_PlayPageContainer questions={questionArray} />
     </article>
 }
 
