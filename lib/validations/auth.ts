@@ -1,6 +1,7 @@
 import { prisma } from "@/utils/db";
 import { z, ZodError } from "zod";
 import bcrypt from 'bcrypt'
+import { getAllOwnedQuiz } from "@/helper/db";
 
 export type validationError = {
     error: any
@@ -52,4 +53,3 @@ export async function validatePassword(password: string , option? : 'db' , dbPas
         return {error: 'Invalid Payload!'}
     }
 }
-    

@@ -1,6 +1,6 @@
 'use server'
 
-import { getQuizById, setOwnedQuiz } from "@/helper/db";
+import { getAllOwnedQuiz, getQuizById, setOwnedQuiz } from "@/helper/db";
 import { prisma } from "@/utils/db";
 
 type actionProps = 'save_quiz' | 'play_quiz'
@@ -12,4 +12,11 @@ export async function handleSubmitPreview(actionName: actionProps, quizId: numbe
         await setOwnedQuiz(quizId, quizData)
     }
 
-} 
+}
+
+
+export async function checkIsQuizOwned(selectedQuizId: number) {
+    const ownedQuiz = await getAllOwnedQuiz()
+    console.log(ownedQuiz);
+
+}

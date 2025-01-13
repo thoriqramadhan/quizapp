@@ -9,3 +9,4 @@ export function validateString(min:number, max:number ,value:string) {
         }
     }
 }
+

@@ -2,6 +2,7 @@ import { Button, PreviewPageButtons } from '@/components/client/Button';
 import OptionDropDownBuilder from '@/components/client/ui/OptionDropDownBuilder';
 import { getQuizById } from '@/helper/db';
 import { handleSubmitPreview } from '@/lib/action/discover';
+import { QuizObject } from '@/types/questionObject';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { FC } from 'react';
@@ -13,7 +14,9 @@ interface PageProps {
 const Page: FC<PageProps> = async ({ params }) => {
     // how this work so we await promise that returning a { quizId: number } object after that we quickly catch that value. 
     const quizId = (await params).quizId;
-    const quizData = await getQuizById(Number(quizId), { with: ['user', 'question'] })
+    const quizData = (await getQuizById(Number(quizId), { with: ['user', 'question'] })) as QuizObject
+    console.log(quizData);
+
     const { name, User, question } = quizData
     const { name: username } = User;
     async function handleSubmit(formData: FormData) {
@@ -95,7 +98,7 @@ const Page: FC<PageProps> = async ({ params }) => {
         </section>
 
         {/* bottomn*/}
-        <PreviewPageButtons quizId={Number(quizId)} />
+        <PreviewPageButtons quizId={Number(quizId)} quizData={quizData} />
 
     </>
 }
