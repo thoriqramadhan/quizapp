@@ -14,6 +14,24 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
     const quizPercentage = Math.floor((currentPage / questions.length) * 100);
     const currentQuestionInit = questions[currentPage - 1]
     const [currentQuestion, setCurrentQuestion] = useState<QuestionObjectDB>(currentQuestionInit)
+    console.log(currentQuestionInit);
+
+    function handleNextQuestion(option: 'prev' | 'next') {
+        if (option == 'next') {
+            if (currentPage == questions.length) {
+                return
+            }
+            setCurrentPage(prev => prev + 1)
+        } else {
+            if (currentPage == 1) {
+                return
+            }
+            setCurrentPage(prev => prev - 1)
+        }
+    }
+    useEffect(() => {
+        setCurrentQuestion(currentQuestionInit)
+    }, [currentPage])
     return (
         <>
             <section className="w-full flex justify-between items-center">
@@ -45,8 +63,9 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
                         </div>
                     ))}
                 </section>
-                <div className="w-full flex items-end justify-end">
-                    <Button className=''>Next</Button>
+                <div className="w-full flex items-end justify-between">
+                    <Button className='' onClick={() => handleNextQuestion('prev')}>Previous</Button>
+                    <Button className='' onClick={() => handleNextQuestion('next')}>Next</Button>
                 </div>
             </section>
         </>
