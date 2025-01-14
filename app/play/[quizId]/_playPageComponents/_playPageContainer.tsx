@@ -22,7 +22,7 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
     function handleUpdate() {
         const selectedData = {
             no: currentPage,
-            selectedChoice: getChoiceAplhabet(selectedChoice)
+            selectedChoice: selectedChoice
         }
         const onGoingReference = playerOngoingAnswer;
         onGoingReference[currentPage - 1] = selectedData
@@ -42,10 +42,14 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
             setCurrentPage(prev => prev - 1)
         }
     }
+    console.log(selectedChoice);
 
     useEffect(() => {
         setCurrentQuestion(currentQuestionInit)
-        setSelectedChoice(playerOngoingAnswer[currentPage - 1] ?? 'da')
+        const selectedInit = playerOngoingAnswer[currentPage - 1]?.selectedChoice ?? 'da'
+        console.log(selectedInit);
+
+        setSelectedChoice(selectedInit)
     }, [currentPage])
     return (
         <>
@@ -93,7 +97,7 @@ interface playPageCardProps {
     shadowColor: string,
     choiceText: string,
     index: 0 | 1 | 2 | 3,
-    setSelectedChoice: Dispatch<SetStateAction<number>>,
+    setSelectedChoice: Dispatch<SetStateAction<string>>,
     isSelected: boolean
 }
 
@@ -101,6 +105,8 @@ const PlayPageCard: FC<playPageCardProps> = ({ mainColor, shadowColor, choiceTex
     function handleOnChange(e: ChangeEvent) {
         setSelectedChoice(getChoiceAplhabet(index))
     }
+    // console.log(isSelected);
+
     const boxShadowStyle = isSelected ? `0px 10px rgba(${shadowColor}` : 'none';
     return (
         <label style={{ backgroundColor: `${mainColor}`, boxShadow: boxShadowStyle }} className='cursor-pointer rounded-xl flex-all-center overflow-y-auto px-3 relative select-none text-white text-xl '>
