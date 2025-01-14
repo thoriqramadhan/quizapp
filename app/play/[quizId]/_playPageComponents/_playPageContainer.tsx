@@ -20,25 +20,37 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
     const [playerOngoingAnswer, setPlayerOngoingAnswer] = useState(JSON.parse(localStorage.getItem(`playerQuizData-${quizId}`)) || [])
 
     function handleUpdate() {
-        const selectedData = {
-            no: currentPage,
-            selectedChoice: selectedChoice
+        let isChoiceValid = false;
+        if (selectedChoice == 'a.' || selectedChoice == 'b.' || selectedChoice == 'c.' || selectedChoice == 'd.') {
+            isChoiceValid = true
         }
-        const onGoingReference = playerOngoingAnswer;
-        onGoingReference[currentPage - 1] = selectedData
-        localStorage.setItem(`playerQuizData-${quizId}`, JSON.stringify(onGoingReference))
+        if (isChoiceValid) {
+            const selectedData = {
+                no: currentPage,
+                selectedChoice: selectedChoice
+            }
+            const onGoingReference = playerOngoingAnswer;
+            onGoingReference[currentPage - 1] = selectedData
+            localStorage.setItem(`playerQuizData-${quizId}`, JSON.stringify(onGoingReference))
+            return true
+        }
+        return false
+
     }
     function handleNextQuestion(option: 'prev' | 'next') {
         if (option == 'next') {
             if (currentPage == questions.length) {
                 return
             }
-            handleUpdate()
-            setCurrentPage(prev => prev + 1)
+            const isValid = handleUpdate()
+            if (isValid) {
+                setCurrentPage(prev => prev + 1)
+            }
         } else {
             if (currentPage == 1) {
                 return
             }
+            const isValid = handleUpdate()
             setCurrentPage(prev => prev - 1)
         }
     }
@@ -84,7 +96,7 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
                 </section>
                 <div className="w-full flex items-end justify-between">
                     <Button className='' onClick={() => handleNextQuestion('prev')}>Previous</Button>
-                    <Button className='' onClick={() => handleNextQuestion('next')}>Next</Button>
+                    <Button className='' onClick={() => handleNextQuestion('next')}>{currentPage == questions.length ? 'Done' : 'Next'}</Button>
                 </div>
             </section>
         </>
