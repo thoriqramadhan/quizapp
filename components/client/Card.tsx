@@ -39,7 +39,7 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
         return false
     }
     useEffect(() => { setIsOpenAnswer(false) }, [InitValue.defaultValue])
-    return <div style={{ backgroundColor: `#${mainColor}`, boxShadow: `0px 10px rgba(${shadowColorRgb}` }} className={cn(` cursor-pointer rounded-xl  flex-all-center overflow-y-auto px-3 relative select-none`, className)} onClick={() => setIsOpenAnswer(true)} {...props}>
+    return <div style={{ backgroundColor: `${mainColor}`, boxShadow: `0px 10px rgba(${shadowColorRgb}` }} className={cn(` cursor-pointer rounded-xl  flex-all-center overflow-y-auto px-3 relative select-none`, className)} onClick={() => setIsOpenAnswer(true)} {...props}>
         {
             isOpenAnswer || InitValue.defaultValue ? <TextareaAutosize value={getChoiceWithoutAlphabet(InitValue.defaultValue, 1)} onChange={(event) => handleChange({ isAnswer: true, answerIndex: choiceIndex }, event.target.value)} autoFocus className="outline-0 bg-transparent text-medium  text-center font-medium text-white  w-[500px] resize-none my-2 text-4xl" /> : <p className='text-white text-4xl'>
                 Add Answer

@@ -1,26 +1,39 @@
 "use client"
 import { Button } from '@/components/client/Button';
 import { DropdownItem, OptionDropdown } from '@/components/client/Dropdown';
+import { cardColor } from '@/constant/cardColor';
 import { QuestionObjectDB } from '@/types/questionObject';
-import { getChoiceWithoutAlphabet } from '@/utils/typhography';
-import { FC, useEffect, useState } from 'react';
+import { getChoiceAplhabet, getChoiceWithoutAlphabet } from '@/utils/typhography';
+import { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
 interface _PlayPageContainerProps {
-    questions: QuestionObjectDB[]
+    questions: QuestionObjectDB[],
+    quizId: string
 }
 
-const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
+const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) => {
     const [currentPage, setCurrentPage] = useState(1)
     const quizPercentage = Math.floor((currentPage / questions.length) * 100);
     const currentQuestionInit = questions[currentPage - 1]
     const [currentQuestion, setCurrentQuestion] = useState<QuestionObjectDB>(currentQuestionInit)
-    console.log(currentQuestionInit);
+    const [selectedChoice, setSelectedChoice] = useState('e.');
+    const [playerOngoingAnswer, setPlayerOngoingAnswer] = useState(JSON.parse(localStorage.getItem(`playerQuizData-${quizId}`)) || [])
 
+    function handleUpdate() {
+        const selectedData = {
+            no: currentPage,
+            selectedChoice: getChoiceAplhabet(selectedChoice)
+        }
+        const onGoingReference = playerOngoingAnswer;
+        onGoingReference[currentPage - 1] = selectedData
+        localStorage.setItem(`playerQuizData-${quizId}`, JSON.stringify(onGoingReference))
+    }
     function handleNextQuestion(option: 'prev' | 'next') {
         if (option == 'next') {
             if (currentPage == questions.length) {
                 return
             }
+            handleUpdate()
             setCurrentPage(prev => prev + 1)
         } else {
             if (currentPage == 1) {
@@ -29,8 +42,10 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
             setCurrentPage(prev => prev - 1)
         }
     }
+
     useEffect(() => {
         setCurrentQuestion(currentQuestionInit)
+        setSelectedChoice(playerOngoingAnswer[currentPage - 1] ?? 'da')
     }, [currentPage])
     return (
         <>
@@ -57,11 +72,11 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
                 </div>
                 <hr />
                 <section className='grid grid-cols-2 w-full h-[400px] gap-5'>
-                    {currentQuestion.choice.map((answer, index) => (
-                        <div key={index} className="bg-red-600 rounded-lg cursor-pointer flex-all-center">
-                            <p className='text-white text-xl'>{getChoiceWithoutAlphabet(answer, 1)}</p>
-                        </div>
-                    ))}
+                    {
+                        cardColor.map((item, index) => (
+                            <PlayPageCard key={index} choiceText={currentQuestion.choice[index]} index={index} setSelectedChoice={setSelectedChoice} mainColor={item.mainColor} shadowColor={item.shadowColor} isSelected={getChoiceAplhabet(index) == selectedChoice} />
+                        ))
+                    }
                 </section>
                 <div className="w-full flex items-end justify-between">
                     <Button className='' onClick={() => handleNextQuestion('prev')}>Previous</Button>
@@ -69,6 +84,29 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions }) => {
                 </div>
             </section>
         </>
+    )
+}
+
+
+interface playPageCardProps {
+    mainColor: string,
+    shadowColor: string,
+    choiceText: string,
+    index: 0 | 1 | 2 | 3,
+    setSelectedChoice: Dispatch<SetStateAction<number>>,
+    isSelected: boolean
+}
+
+const PlayPageCard: FC<playPageCardProps> = ({ mainColor, shadowColor, choiceText, index, setSelectedChoice, isSelected }) => {
+    function handleOnChange(e: ChangeEvent) {
+        setSelectedChoice(getChoiceAplhabet(index))
+    }
+    const boxShadowStyle = isSelected ? `0px 10px rgba(${shadowColor}` : 'none';
+    return (
+        <label style={{ backgroundColor: `${mainColor}`, boxShadow: boxShadowStyle }} className='cursor-pointer rounded-xl flex-all-center overflow-y-auto px-3 relative select-none text-white text-xl '>
+            <input type="radio" name={`choice`} id={`choice-${index}`} hidden onChange={handleOnChange} value={`${choiceText}`} />
+            {getChoiceWithoutAlphabet(choiceText, 1)}
+        </label>
     )
 }
 

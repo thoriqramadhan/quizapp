@@ -13,8 +13,9 @@ const Page: FC<PageProps> = async ({ params }) => {
     const quizId = (await params).quizId
     const quizObject = await getQuizById(Number(quizId), { with: ['question'] })
     const questionArray = quizObject!.question as QuestionObjectDB[] | []
+
     return <article className='py-5 px-10'>
-        <_PlayPageContainer questions={questionArray} />
+        <_PlayPageContainer questions={questionArray} quizId={quizId} />
     </article>
 }
 
