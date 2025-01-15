@@ -6,7 +6,7 @@ new PrismaClient({
   log: ['query', 'info', 'warn', 'error'], // Opsional: untuk debugging
 });
 
-async function disconnectPrisma() {
+export async function disconnectPrisma() {
     try {
       console.log("Disconnecting Prisma...");
       await prisma.$disconnect();
