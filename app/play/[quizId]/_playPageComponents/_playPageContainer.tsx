@@ -4,6 +4,8 @@ import { DropdownItem, OptionDropdown } from '@/components/client/Dropdown';
 import { cardColor } from '@/constant/cardColor';
 import { QuestionObjectDB } from '@/types/questionObject';
 import { getChoiceAplhabet, getChoiceWithoutAlphabet } from '@/utils/typhography';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 import { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 
 interface _PlayPageContainerProps {
@@ -21,10 +23,21 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
     const [playerOngoingAnswer, setPlayerOngoingAnswer] = useState(JSON.parse(localStorage.getItem(`playerQuizData-${quizId}`)) || [])
 
     const [quizResultData, setQuizResultData] = useState({
+        quizId: quizId,
         quizPercentage: '',
         stats: []
     });
 
+    async function submitQuiz(quizResultData) {
+        try {
+            const response = await fetch('/api/submitQuiz', { method: 'POST', body: JSON.stringify({ data: quizResultData }) })
+            if (response.ok) {
+                const data = await response.json()
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     function handleUpdate() {
         let isChoiceValid = false;
@@ -47,6 +60,7 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
     function handleSubmit() {
         let correctAnswer = 0;
         const userStatistic = {
+            quizId: quizId,
             quizPercentage: '',
             totalCorrectChoice: 0,
             stats: []
@@ -92,6 +106,9 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         setSelectedChoice(selectedInit)
         if (currentPage > questions.length) {
             handleSubmit()
+            localStorage.removeItem(`playerQuizData-${quizResultData.quizId}`)
+            setPlayerOngoingAnswer([])
+            submitQuiz(quizResultData)
             return
         }
     }, [currentPage])
@@ -167,6 +184,7 @@ const PlayPageCard: FC<playPageCardProps> = ({ mainColor, shadowColor, choiceTex
 
 interface QuizResultStatisticProps {
     quizResultData: {
+        quizId: string,
         quizPercentage: string,
         stats: never[],
         totalCorrectChoice: number
@@ -174,14 +192,14 @@ interface QuizResultStatisticProps {
 }
 
 const QuizResultStatistic: FC<QuizResultStatisticProps> = ({ quizResultData }) => {
-    return <div className='w-full h-screen flex-all-center '>
-        <div className="w-full min-h-[600px] border rounded-lg shadow-md bg-slate-700 py-10 px-10">
+    return <div className='w-full h-screen flex-all-center'>
+        <div className="w-full min-h-[600px] relative border rounded-lg shadow-md overflow-hidden bg-slate-700 py-10 px-10">
             <section className="w-full flex justify-center flex-col items-center space-y-5 overflow-hidden">
-                <div className='text-5xl font-bold text-white'><span className='text-green-400'>{quizResultData.totalCorrectChoice}</span> / {quizResultData.stats.length}</div>
+                <div className='text-5xl font-bold text-white'><span className='text-green-400'>{quizResultData?.totalCorrectChoice}</span> / {quizResultData.stats.length}</div>
                 <div className="w-full flex gap-x-5">
-                    <p className='text-white font-bold'>{quizResultData.quizPercentage}</p>
+                    <p className='text-white font-bold'>{quizResultData?.quizPercentage}</p>
                     <div className='flex-1 h-5 rounded-md bg-red-400 overflow-hidden'>
-                        <span className='h-full bg-green-300 block ' style={{ width: quizResultData.quizPercentage }} ></span>
+                        <span className='h-full bg-green-300 block ' style={{ width: quizResultData?.quizPercentage }} ></span>
                     </div>
                 </div>
             </section>
@@ -194,7 +212,7 @@ const QuizResultStatistic: FC<QuizResultStatisticProps> = ({ quizResultData }) =
                     </tr>
                 </thead>
                 <tbody>
-                    {quizResultData.stats.map((item, index) => (
+                    {quizResultData?.stats.map((item, index) => (
                         <tr className={`${item.status == 'benar' ? 'bg-green-400' : 'bg-red-400'} text-white`} key={index}>
                             <td className='border border-slate-600'>{item.quizNo}</td>
                             <td className='border border-slate-600'>{item.selectedChoice}</td>
@@ -203,6 +221,10 @@ const QuizResultStatistic: FC<QuizResultStatisticProps> = ({ quizResultData }) =
                     ))}
                 </tbody>
             </table>
+            <Link href={'/home'} className='absolute flex gap-1 items-center bottom-5 right-3 cursor-pointer group transition-500 hover:bg-black/20 px-2'>
+                <p className='text-white text-xl translate-x-[400px] opacity-0 group-hover:translate-x-0 transition-500 group-hover:opacity-100'>Back to home</p>
+                <ChevronLeft color='white' className='w-[50px] h-[50px]' />
+            </Link>
         </div>
     </div>
 }

@@ -46,6 +46,9 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     quiz: []
                 }
                 handleChangeQuestion(initialQuestionObject)
+            } else {
+                console.log(response);
+
             }
         } catch (error) {
             console.log(error);
