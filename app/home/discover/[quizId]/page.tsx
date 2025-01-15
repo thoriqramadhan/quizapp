@@ -1,6 +1,6 @@
 import { Button, PreviewPageButtons } from '@/components/client/Button';
 import OptionDropDownBuilder from '@/components/client/ui/OptionDropDownBuilder';
-import { getQuizById } from '@/helper/db';
+import { getAllParticipant, getQuizById } from '@/helper/db';
 import { handleSubmitPreview } from '@/lib/action/discover';
 import { QuizObject } from '@/types/questionObject';
 import { ArrowLeft, Plus } from 'lucide-react';
@@ -15,7 +15,8 @@ const Page: FC<PageProps> = async ({ params }) => {
     // how this work so we await promise that returning a { quizId: number } object after that we quickly catch that value. 
     const quizId = (await params).quizId;
     const quizData = (await getQuizById(Number(quizId), { with: ['user', 'question'] })) as QuizObject
-    console.log(quizData);
+    const participantData = await getAllParticipant(Number(quizId))
+    console.log(participantData);
 
     const { name, User, question } = quizData
     const { name: username } = User;
@@ -90,10 +91,38 @@ const Page: FC<PageProps> = async ({ params }) => {
                 Follow {enhanceIcon(<Plus />)}
             </Button>
         </section>
+        {/* description */}
         <section className='space-y-3'>
             <p className='text-slate-700 font-semibold'>Description</p>
             <div className="max-h-[200px] overflow-y-auto scrollbar-thin">
                 <p className='text-description'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus architecto voluptates molestias id esse, perspiciatis facere vitae ducimus, assumenda enim nisi, error impedit. Quos iure distinctio eligendi animi blanditiis minus maiores corrupti nihil, reiciendis atque a cumque illo. Rem modi quidem eveniet, incidunt aperiam veritatis quasi, quis nihil, ratione rerum architecto obcaecati quisquam quibusdam eaque illo consectetur eius atque expedita soluta? Nisi, ratione eum culpa quis corporis sapiente repellendus atque a? Molestiae temporibus voluptate dolorum, optio, quaerat tempora ea reprehenderit omnis tempore quod enim a quia expedita possimus illo soluta exercitationem suscipit. Officiis nobis reiciendis repellendus reprehenderit temporibus voluptatibus in.</p>
+            </div>
+        </section>
+        {/* leaderboard */}
+        <section className='w-full flex flex-col space-y-5'>
+            <p className='text-slate-700 font-semibold'>Leaderboard</p>
+            <div className='w-full relative flex gap-x-3 justify-center py-10'>
+                {
+                    Array.from({ length: 3 }).map((item, index) => (
+                        <div key={index} className={`w-20 h-20 bg-red-200 rounded-full block border-[3px] border-[#715BC7] relative ${index == 1 && '-top-10'}`}>
+                            <div className="w-8 h-8 rounded-full bg-[#715BC7] absolute -bottom-3  left-1/2 -translate-x-1/2 flex-all-center text-white">{index + 1}</div>
+                        </div>
+                    ))
+                }
+            </div>
+            <div className='w-full rounded-t-2xl h-[400px] bg-red-100 p-3 space-y-2 overflow-y-auto thin-scrollbar'>
+                {
+                    Array.from({ length: 10 }).map((item, index) => (
+                        <div key={index} className='w-full min-h-10 bg-slate-700 rounded-xl py-2 px-5 items-center text-white flex justify-between'>
+                            <div className='flex gap-x-2 items-center '>
+                                <p>{index + 4}</p>
+                                <div className="w-10 h-10 rounded-full border"></div>
+                                <p>Sumanto Prasetyo</p>
+                            </div>
+                            <div>100%</div>
+                        </div>
+                    ))
+                }
             </div>
         </section>
 

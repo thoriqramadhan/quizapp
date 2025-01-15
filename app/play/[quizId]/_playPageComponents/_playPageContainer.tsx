@@ -28,11 +28,17 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         stats: []
     });
 
-    async function submitQuiz(quizResultData) {
+    // BUG STATE BELUM KE UPDATE UDAH UPDATE DB
+    async function submitQuiz() {
         try {
+            console.log(quizResultData);
             const response = await fetch('/api/submitQuiz', { method: 'POST', body: JSON.stringify({ data: quizResultData }) })
             if (response.ok) {
                 const data = await response.json()
+                localStorage.removeItem(`playerQuizData-${quizResultData.quizId}`)
+                setPlayerOngoingAnswer([])
+                console.log(data);
+
             }
         } catch (error) {
             console.log(error);
@@ -81,10 +87,11 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
             }
             userStatistic.stats.push(finalData)
         }
+
         const quizPercentagePoint = `${Math.floor(((userStatistic.totalCorrectChoice / questions.length) * 100))}%`
         userStatistic.quizPercentage = quizPercentagePoint
         setQuizResultData(userStatistic)
-
+        submitQuiz()
     }
     function handleNextQuestion(option: 'prev' | 'next') {
         if (option == 'next') {
@@ -106,9 +113,6 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         setSelectedChoice(selectedInit)
         if (currentPage > questions.length) {
             handleSubmit()
-            localStorage.removeItem(`playerQuizData-${quizResultData.quizId}`)
-            setPlayerOngoingAnswer([])
-            submitQuiz(quizResultData)
             return
         }
     }, [currentPage])

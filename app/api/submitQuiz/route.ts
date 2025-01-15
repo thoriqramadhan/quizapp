@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
         // user info
         const userInfo = (await decrypt(jwtSign)).user
         const userDB = await getEmail(userInfo.email)
+        
         await prisma.participant.create(
             {
                 data: {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
             }
         )
         await disconnectPrisma()
-        return NextResponse.json([data, userScore , userDB] , {status: 200})
+        return NextResponse.json([data, userScore , userDB ] , {status: 200})
     } catch (error) {
         console.log(error);
         

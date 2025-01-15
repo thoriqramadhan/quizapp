@@ -23,7 +23,7 @@ export async function getUserByName(name: string) {
 }
 
 type optionProps = {
-    with: ('question' | 'user') []
+    with: ('question' | 'user' | 'participant') []
 }
 function quizOptionBuilder(option?: optionProps) {
     const optionBuilder = {}
@@ -34,6 +34,8 @@ function quizOptionBuilder(option?: optionProps) {
                 optionBuilder.include.question = true;
             } else if (option == 'user') {
                 optionBuilder.include.User = true;
+            } else if (option == 'participant') {
+                optionBuilder.include.Participant = true;
             }
         })
     }
@@ -103,6 +105,17 @@ export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
         },
         data: {
             savedQuiz: newSavedQuiz
+        }
+    })
+}
+
+export async function getAllParticipant(quizId: number) {
+    return await prisma.participant.findMany({
+        where: {
+            quizId: quizId
+        },
+        include: {
+            participant: true
         }
     })
 }
