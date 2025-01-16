@@ -3,6 +3,7 @@ import OptionDropDownBuilder from '@/components/client/ui/OptionDropDownBuilder'
 import { getAllParticipant, getQuizById } from '@/helper/db';
 import { handleSubmitPreview } from '@/lib/action/discover';
 import { QuizObject } from '@/types/questionObject';
+import { cn } from '@/utils/style';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { FC } from 'react';
@@ -101,15 +102,23 @@ const Page: FC<PageProps> = async ({ params }) => {
         {/* leaderboard */}
         <section className='w-full flex flex-col space-y-5'>
             <p className='text-slate-700 font-semibold'>Leaderboard</p>
-            <div className='w-full relative flex gap-x-3 justify-center py-10'>
+            <div className='w-full relative flex gap-x-3 justify-center py-10 '>
                 {
                     Array.from({ length: 3 }).map((item, index) => (
-                        <div key={index} className={`w-20 h-20 bg-red-200 rounded-full block border-[3px] border-[#715BC7] relative ${index == 1 && '-top-10'}`}>
-                            <div className="w-8 h-8 rounded-full bg-[#715BC7] absolute -bottom-3  left-1/2 -translate-x-1/2 flex-all-center text-white">{index + 1}</div>
+                        <div className={cn(`flex flex-col justify-center items-center gap-y-4 relative order-1 ${index == 0 && '-top-10 order-2'} ${index == 2 && 'order-3'}`)} key={index} >
+                            {/* profi\le picture */}
+                            <div className={`w-20 h-20 bg-red-200 rounded-full block border-[3px] border-[#715BC7] relative `}>
+                                <div className="w-8 h-8 rounded-full bg-[#715BC7] absolute -bottom-3  left-1/2 -translate-x-1/2 flex-all-center text-white">{index + 1}</div>
+                            </div>
+                            <span className="text-center">
+                                <h1 className='font-semibold text-lg leading-tight'>Anthony Schze</h1>
+                                <p>100%</p>
+                            </span>
                         </div>
                     ))
                 }
             </div>
+            {/* 4 - infinite */}
             <div className='w-full rounded-t-2xl h-[400px] bg-red-100 p-3 space-y-2 overflow-y-auto thin-scrollbar'>
                 {
                     Array.from({ length: 10 }).map((item, index) => (
