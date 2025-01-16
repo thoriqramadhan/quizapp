@@ -110,12 +110,16 @@ export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
 }
 
 export async function getAllParticipant(quizId: number) {
-    return await prisma.participant.findMany({
-        where: {
-            quizId: quizId
-        },
-        include: {
-            participant: true
-        }
-    })
+    try {
+        return await prisma.participant.findMany({
+            where: {
+                quizId: quizId
+            },
+            include: {
+                participant: true
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
 }

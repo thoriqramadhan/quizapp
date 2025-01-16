@@ -28,7 +28,6 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         stats: []
     });
 
-    // BUG STATE BELUM KE UPDATE UDAH UPDATE DB
     async function submitQuiz() {
         try {
             console.log(quizResultData);
@@ -91,7 +90,6 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         const quizPercentagePoint = `${Math.floor(((userStatistic.totalCorrectChoice / questions.length) * 100))}%`
         userStatistic.quizPercentage = quizPercentagePoint
         setQuizResultData(userStatistic)
-        submitQuiz()
     }
     function handleNextQuestion(option: 'prev' | 'next') {
         if (option == 'next') {
@@ -116,6 +114,9 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
             return
         }
     }, [currentPage])
+    useEffect(() => {
+        submitQuiz()
+    }, [quizResultData])
     return (
         <>
             {currentQuestion ?
