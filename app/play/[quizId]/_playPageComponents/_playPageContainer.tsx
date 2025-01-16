@@ -115,7 +115,9 @@ const _PlayPageContainer: FC<_PlayPageContainerProps> = ({ questions, quizId }) 
         }
     }, [currentPage])
     useEffect(() => {
-        submitQuiz()
+        if (quizResultData.stats.length > 0) {
+            submitQuiz()
+        }
     }, [quizResultData])
     return (
         <>
