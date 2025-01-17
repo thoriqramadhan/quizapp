@@ -44,7 +44,7 @@ const Page: FC<PageProps> = async ({ params }) => {
         },
         {
             title: 'Played',
-            value: '10'
+            value: `${participantData?.length}`
         },
         {
             title: 'Bookmarked',
