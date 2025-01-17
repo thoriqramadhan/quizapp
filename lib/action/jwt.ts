@@ -2,7 +2,7 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.JWTSECRET
+const secretKey =  process.env.NEXT_PUBLIC_jWTSECRET
 const encodedKey = new TextEncoder().encode(secretKey)
 
 export async function signJWT(payload: { user: User, expiredAt: Date }) {
@@ -18,12 +18,13 @@ export async function signJWT(payload: { user: User, expiredAt: Date }) {
 }
 
 export async function decrypt(jwtSignature: string) {
+    console.log('JWTSECRET:', process.env.JWTSECRET);
     try {
         const { payload } = await jwtVerify(jwtSignature, encodedKey)
         return payload;
     } catch (error) {
-        console.log('Failed to verify session!')
-        console.log(error)
+        console.error('Failed to verify session!', error);
+        throw new Error('Invalid or expired JWT signature.');
     }
 }
 

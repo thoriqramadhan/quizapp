@@ -23,7 +23,7 @@ export async function getUserByName(name: string) {
 }
 
 type optionProps = {
-    with: ('question' | 'user') []
+    with: ('question' | 'user' | 'participant') []
 }
 function quizOptionBuilder(option?: optionProps) {
     const optionBuilder = {}
@@ -34,6 +34,8 @@ function quizOptionBuilder(option?: optionProps) {
                 optionBuilder.include.question = true;
             } else if (option == 'user') {
                 optionBuilder.include.User = true;
+            } else if (option == 'participant') {
+                optionBuilder.include.Participant = true;
             }
         })
     }
@@ -64,8 +66,26 @@ export async function getQuizById( id: number,option?: optionProps) {
     }
 }
 
+export async function getAllOwnedQuiz() {
+    try {
+        const authInfo = await getAuthInfo()
+        return await prisma.user.findFirst({
+            where: {
+                email: authInfo.email
+            },
+            select: {
+                savedQuiz: true
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
     const authInfo = await getAuthInfo() as number
+    console.log(quizData);
+    
     const savedQuizDB = await prisma.user.findFirst({
         where: {
             id: authInfo.id
@@ -87,4 +107,19 @@ export async function setOwnedQuiz(quizId: number , quizData: QuizObject) {
             savedQuiz: newSavedQuiz
         }
     })
+}
+
+export async function getAllParticipant(quizId: number) {
+    try {
+        return await prisma.participant.findMany({
+            where: {
+                quizId: quizId
+            },
+            include: {
+                participant: true
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
 }

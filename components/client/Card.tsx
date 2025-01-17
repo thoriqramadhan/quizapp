@@ -39,7 +39,7 @@ export const CardAnswer: FC<CardAnswer> = ({ className, mainColor, shadowColorRg
         return false
     }
     useEffect(() => { setIsOpenAnswer(false) }, [InitValue.defaultValue])
-    return <div style={{ backgroundColor: `#${mainColor}`, boxShadow: `0px 10px rgba(${shadowColorRgb}` }} className={cn(` cursor-pointer rounded-xl  flex-all-center overflow-y-auto px-3 relative select-none`, className)} onClick={() => setIsOpenAnswer(true)} {...props}>
+    return <div style={{ backgroundColor: `${mainColor}`, boxShadow: `0px 10px rgba(${shadowColorRgb}` }} className={cn(` cursor-pointer rounded-xl  flex-all-center overflow-y-auto px-3 relative select-none`, className)} onClick={() => setIsOpenAnswer(true)} {...props}>
         {
             isOpenAnswer || InitValue.defaultValue ? <TextareaAutosize value={getChoiceWithoutAlphabet(InitValue.defaultValue, 1)} onChange={(event) => handleChange({ isAnswer: true, answerIndex: choiceIndex }, event.target.value)} autoFocus className="outline-0 bg-transparent text-medium  text-center font-medium text-white  w-[500px] resize-none my-2 text-4xl" /> : <p className='text-white text-4xl'>
                 Add Answer
@@ -92,7 +92,7 @@ interface QuizCardProps {
 
 export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
     const { name, User, id } = quizObject
-    const { name: username, } = User
+    const { name: username } = User
 
     return <Link href={`/home/discover/${id}`} className="w-[300px] h-[380px] flex flex-col shrink-0 rounded-md bg-white border cursor-pointer">
         <span className='w-full h-[40%] block bg-zinc-50'>
@@ -102,7 +102,7 @@ export const QuizCard: FC<QuizCardProps> = ({ quizObject }) => {
         </div>
         <div className="w-full p-5 flex gap-3 flex-y-center">
             <span className='block w-10 h-10 bg-zinc-50 rounded-full'></span>
-            <p className='font-medium'>{username}</p>
+            <p className='font-medium'>{username ?? ''}</p>
         </div>
     </Link>
 }

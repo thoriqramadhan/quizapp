@@ -5,6 +5,7 @@ import { Dropdown, DropdownItem, OptionDropdown } from '@/components/client/Drop
 import ErrorMessage from '@/components/server/ErrorMessage';
 import { InputSection } from '@/components/server/Form';
 import { InputLiteral, InputSelect } from '@/components/server/ui/Input';
+import { cardColor } from '@/constant/cardColor';
 import { useQuiz } from '@/lib/context/createQuiz';
 import { useModal } from '@/lib/context/modal';
 import { validateString } from '@/lib/validations/global';
@@ -45,6 +46,9 @@ const CreateQuiz: FC<PageProps> = ({ }) => {
                     quiz: []
                 }
                 handleChangeQuestion(initialQuestionObject)
+            } else {
+                console.log(response);
+
             }
         } catch (error) {
             console.log(error);
@@ -275,14 +279,11 @@ const AnswerContainer: FC<AnswerContainerProps> = () => {
             </label>
             {/* answer */}
             <section className='w-full h-[800px] grid md:h-[400px] md:grid-cols-2 md:grid-rows-2 gap-5 mb-5'>
-                <CardAnswer mainColor='007AF7' shadowColorRgb='0,92,208' choiceIndex={0} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[0], defaultCorrectAnswer: questionObject.correctChoice }} />
-
-                <CardAnswer mainColor='FF3D3E' shadowColorRgb='219,47,47' choiceIndex={1} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[1], defaultCorrectAnswer: questionObject.correctChoice }} />
-
-                <CardAnswer mainColor='FF9306' shadowColorRgb='255,103,0' choiceIndex={2} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[2], defaultCorrectAnswer: questionObject.correctChoice }} />
-
-                <CardAnswer mainColor='00D796' shadowColorRgb='0,187,122' choiceIndex={3} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[3], defaultCorrectAnswer: questionObject.correctChoice }} />
-
+                {
+                    cardColor.map((item, index) => (
+                        <CardAnswer key={index} mainColor={item.mainColor} shadowColorRgb={item.shadowColor} choiceIndex={index} handleChange={handleChange} InitValue={{ defaultValue: questionObject.choice[index], defaultCorrectAnswer: questionObject.correctChoice }} />
+                    ))
+                }
             </section>
             <QuestionView handleSubmit={handleSubmit} />
         </>

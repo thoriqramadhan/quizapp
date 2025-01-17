@@ -1,7 +1,10 @@
 import { Button, PreviewPageButtons } from '@/components/client/Button';
 import OptionDropDownBuilder from '@/components/client/ui/OptionDropDownBuilder';
-import { getQuizById } from '@/helper/db';
+import _leaderBoardComponents from './_leaderboardUI/_leaderBoardComponents';
+import { getAllParticipant, getQuizById } from '@/helper/db';
 import { handleSubmitPreview } from '@/lib/action/discover';
+import { QuizObject } from '@/types/questionObject';
+import { cn } from '@/utils/style';
 import { ArrowLeft, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { FC } from 'react';
@@ -13,7 +16,10 @@ interface PageProps {
 const Page: FC<PageProps> = async ({ params }) => {
     // how this work so we await promise that returning a { quizId: number } object after that we quickly catch that value. 
     const quizId = (await params).quizId;
-    const quizData = await getQuizById(Number(quizId), { with: ['user', 'question'] })
+    const quizData = (await getQuizById(Number(quizId), { with: ['user', 'question'] })) as QuizObject
+    const participantData = await getAllParticipant(Number(quizId))
+    console.log(participantData);
+
     const { name, User, question } = quizData
     const { name: username } = User;
     async function handleSubmit(formData: FormData) {
@@ -38,7 +44,7 @@ const Page: FC<PageProps> = async ({ params }) => {
         },
         {
             title: 'Played',
-            value: '10'
+            value: `${participantData?.length}`
         },
         {
             title: 'Bookmarked',
@@ -51,7 +57,6 @@ const Page: FC<PageProps> = async ({ params }) => {
         }
         return icon
     }
-
     return <>
         <section className="w-full p-3  flex justify-between">
             <Link href={'/home/discover'}>
@@ -87,15 +92,18 @@ const Page: FC<PageProps> = async ({ params }) => {
                 Follow {enhanceIcon(<Plus />)}
             </Button>
         </section>
+        {/* description */}
         <section className='space-y-3'>
             <p className='text-slate-700 font-semibold'>Description</p>
             <div className="max-h-[200px] overflow-y-auto scrollbar-thin">
                 <p className='text-description'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus architecto voluptates molestias id esse, perspiciatis facere vitae ducimus, assumenda enim nisi, error impedit. Quos iure distinctio eligendi animi blanditiis minus maiores corrupti nihil, reiciendis atque a cumque illo. Rem modi quidem eveniet, incidunt aperiam veritatis quasi, quis nihil, ratione rerum architecto obcaecati quisquam quibusdam eaque illo consectetur eius atque expedita soluta? Nisi, ratione eum culpa quis corporis sapiente repellendus atque a? Molestiae temporibus voluptate dolorum, optio, quaerat tempora ea reprehenderit omnis tempore quod enim a quia expedita possimus illo soluta exercitationem suscipit. Officiis nobis reiciendis repellendus reprehenderit temporibus voluptatibus in.</p>
             </div>
         </section>
+        {/* leaderboard */}
+        <_leaderBoardComponents participants={participantData} />
 
         {/* bottomn*/}
-        <PreviewPageButtons quizId={Number(quizId)} />
+        <PreviewPageButtons quizId={Number(quizId)} quizData={quizData} />
 
     </>
 }

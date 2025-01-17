@@ -55,7 +55,9 @@ model Participant {
   id          Int    @id @default(autoincrement())
   title       String
   time        Int?
+  score       Int? // Nilai peserta
   Quiz        Quiz?  @relation(fields: [quizId], references: [id])
-  participant User[]
   quizId      Int?
+  participant User?  @relation(fields: [userId], references: [id]) // Relasi opsional ke User
+  userId      Int?
 }

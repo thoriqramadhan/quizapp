@@ -24,3 +24,7 @@ export function getChoiceWithoutAlphabet(value: string , index: 0 | 1) {
     const splitedValue = value.split('.')
     return splitedValue[index ?? 1] 
 }
+
+export function wordWithout(value: string , without:string) {
+    return value.replace(without , '')
+}
